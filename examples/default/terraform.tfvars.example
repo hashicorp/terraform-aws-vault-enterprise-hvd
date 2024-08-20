@@ -1,0 +1,41 @@
+#------------------------------------------------------------------------------
+# Common
+#------------------------------------------------------------------------------
+friendly_name_prefix = "<example>"
+vault_fqdn           = "<vault-aws-use2.domain.tld>" # Must match TLS cert SAN entry
+
+#------------------------------------------------------------------------------
+# Networking
+#------------------------------------------------------------------------------
+net_vpc_id            = "<vpc-00001111222233334>"
+load_balancing_scheme = "<EXTERNAL>"
+
+net_vault_subnet_ids = [
+  "<subnet-00000000000000001>",
+  "<subnet-00000000000000002>",
+  "<subnet-00000000000000003>"
+]
+
+net_lb_subnet_ids = [
+  "<subnet-10000000000000001>",
+  "<subnet-10000000000000002>",
+  "<subnet-10000000000000003>"
+]
+
+net_ingress_vault_cidr_blocks = ["<172.31.0.0/16>", "<5.6.7.8/32>"]
+net_ingress_ssh_cidr_blocks   = ["<172.31.0.0/16>", "<5.6.7.8/32>"]
+
+
+#------------------------------------------------------------------------------
+# AWS Secrets Manager installation secrets and AWS KMS unseal key
+#------------------------------------------------------------------------------
+sm_vault_license_arn      = "<arn:aws:secretsmanager:us-east-2:444455556666:secret:vault-ent-license-ppKJmU>"
+sm_vault_tls_cert_arn     = "<arn:aws:secretsmanager:us-east-2:444455556666:secret:vault-tls-cert-qI2jft>"
+sm_vault_tls_cert_key_arn = "<arn:aws:secretsmanager:us-east-2:444455556666:secret:vault-tls-cert-key-Lb4Gnq>"
+sm_vault_tls_ca_bundle    = null
+vault_seal_awskms_key_arn = "<arn:aws:kms:us-east-2:727169316875:key/bafef8c5-8581-4524-b5c2-7d55524254e4>"
+
+#------------------------------------------------------------------------------
+# Compute
+#------------------------------------------------------------------------------
+vm_key_pair_name = "<example-key>"
