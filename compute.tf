@@ -1,53 +1,38 @@
-data "cloudinit_config" "main" {
-  gzip          = true
-  base64_encode = true
+locals {
+  vault_user_data_template_vars = {
+    # system paths and settings
+    systemd_dir              = var.systemd_dir,
+    vault_dir_bin            = var.vault_dir_bin,
+    vault_dir_config         = var.vault_dir_config,
+    vault_dir_home           = var.vault_dir_home,
+    vault_dir_logs           = var.vault_dir_logs,
+    vault_user_name          = var.vault_user_name,
+    vault_group_name         = var.vault_group_name,
+    additional_package_names = join(" ", var.additional_package_names)
 
-  part {
-    filename     = "cloud-config.yaml"
-    content_type = "text/cloud-config"
+    # installation secrets
+    sm_vault_license_arn      = var.sm_vault_license_arn,
+    sm_vault_tls_cert_arn     = var.sm_vault_tls_cert_arn,
+    sm_vault_tls_cert_key_arn = var.sm_vault_tls_cert_key_arn,
+    sm_vault_tls_ca_bundle    = var.sm_vault_tls_ca_bundle == null ? "NONE" : var.sm_vault_tls_ca_bundle
 
-    content = file("${path.module}/templates/cloud-config.yml")
-  }
+    # Vault settings
+    vault_fqdn                               = var.vault_fqdn,
+    vault_install_url                        = format("https://releases.hashicorp.com/vault/%s/vault_%s_linux_amd64.zip", var.vault_version, var.vault_version),
+    vault_disable_mlock                      = var.vault_disable_mlock,
+    vault_enable_ui                          = var.vault_enable_ui,
+    vault_default_lease_ttl_duration         = var.vault_default_lease_ttl_duration,
+    vault_max_lease_ttl_duration             = var.vault_max_lease_ttl_duration,
+    vault_port_api                           = var.vault_port_api,
+    vault_port_cluster                       = var.vault_port_cluster,
+    vault_tls_require_and_verify_client_cert = var.vault_tls_require_and_verify_client_cert,
+    vault_tls_disable_client_certs           = var.vault_tls_disable_client_certs,
+    vault_seal_type                          = var.vault_seal_type,
+    vault_seal_attributes                    = local.vault_seal_attributes,
 
-  part {
-    filename     = "install-vault.sh"
-    content_type = "text/x-shellscript"
-
-    content = templatefile("${path.module}/templates/install-vault.sh.tpl", {
-      # system paths and settings
-      systemd_dir              = var.systemd_dir,
-      vault_dir_bin            = var.vault_dir_bin,
-      vault_dir_config         = var.vault_dir_config,
-      vault_dir_home           = var.vault_dir_home,
-      vault_dir_logs           = var.vault_dir_logs,
-      vault_user_name          = var.vault_user_name,
-      vault_group_name         = var.vault_group_name,
-      additional_package_names = join(" ", var.additional_package_names)
-
-      # installation secrets
-      sm_vault_license_arn      = var.sm_vault_license_arn,
-      sm_vault_tls_cert_arn     = var.sm_vault_tls_cert_arn,
-      sm_vault_tls_cert_key_arn = var.sm_vault_tls_cert_key_arn,
-      sm_vault_tls_ca_bundle    = var.sm_vault_tls_ca_bundle == null ? "NONE" : var.sm_vault_tls_ca_bundle
-
-      # Vault settings
-      vault_fqdn                               = var.vault_fqdn,
-      vault_install_url                        = format("https://releases.hashicorp.com/vault/%s/vault_%s_linux_amd64.zip", var.vault_version, var.vault_version),
-      vault_disable_mlock                      = var.vault_disable_mlock,
-      vault_enable_ui                          = var.vault_enable_ui,
-      vault_default_lease_ttl_duration         = var.vault_default_lease_ttl_duration,
-      vault_max_lease_ttl_duration             = var.vault_max_lease_ttl_duration,
-      vault_port_api                           = var.vault_port_api,
-      vault_port_cluster                       = var.vault_port_cluster,
-      vault_tls_require_and_verify_client_cert = var.vault_tls_require_and_verify_client_cert,
-      vault_tls_disable_client_certs           = var.vault_tls_disable_client_certs,
-      vault_seal_type                          = var.vault_seal_type,
-      vault_seal_attributes                    = local.vault_seal_attributes,
-
-      vault_plugin_urls   = var.vault_plugin_urls
-      auto_join_tag_key   = var.vault_raft_auto_join_tag == null ? "aws:autoscaling:groupName" : keys(var.vault_raft_auto_join_tag)[0],
-      auto_join_tag_value = var.vault_raft_auto_join_tag == null ? format("%s-asg", var.friendly_name_prefix) : values(var.vault_raft_auto_join_tag)[0],
-    })
+    vault_plugin_urls   = var.vault_plugin_urls
+    auto_join_tag_key   = var.vault_raft_auto_join_tag == null ? "aws:autoscaling:groupName" : keys(var.vault_raft_auto_join_tag)[0],
+    auto_join_tag_value = var.vault_raft_auto_join_tag == null ? format("%s-asg", var.friendly_name_prefix) : values(var.vault_raft_auto_join_tag)[0],
   }
 }
 
@@ -60,7 +45,12 @@ resource "aws_launch_template" "main" {
   update_default_version = true
   tags                   = var.resource_tags
 
-  user_data = data.cloudinit_config.main.rendered
+  user_data = base64encode(
+    templatefile(
+      "${path.module}/templates/install-vault.sh.tpl",
+      local.vault_user_data_template_vars
+    )
+  )
 
   # root
   block_device_mappings {

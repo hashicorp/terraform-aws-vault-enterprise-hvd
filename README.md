@@ -38,7 +38,6 @@ No requirements.
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-| <a name="provider_cloudinit"></a> [cloudinit](#provider\_cloudinit) | n/a |
 
 ## Modules
 
@@ -67,7 +66,6 @@ No modules.
 | [aws_kms_key.vault_unseal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
-| [cloudinit_config.main](https://registry.terraform.io/providers/hashicorp/cloudinit/latest/docs/data-sources/config) | data source |
 
 ## Inputs
 
@@ -77,6 +75,7 @@ No modules.
 | <a name="input_asg_health_check_grace_period"></a> [asg\_health\_check\_grace\_period](#input\_asg\_health\_check\_grace\_period) | The amount of time to expire before the autoscaling group terminates an unhealthy node is terminated | `string` | `600` | no |
 | <a name="input_asg_health_check_type"></a> [asg\_health\_check\_type](#input\_asg\_health\_check\_type) | Defines how autoscaling health checking is done | `string` | `"EC2"` | no |
 | <a name="input_asg_node_count"></a> [asg\_node\_count](#input\_asg\_node\_count) | The number of nodes to create in the pool. | `number` | `6` | no |
+| <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_health_check_deregistration_delay"></a> [health\_check\_deregistration\_delay](#input\_health\_check\_deregistration\_delay) | Amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused. The range is 0-3600 seconds. | `number` | `15` | no |
 | <a name="input_health_check_interval"></a> [health\_check\_interval](#input\_health\_check\_interval) | Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. | `number` | `5` | no |
 | <a name="input_health_check_timeout"></a> [health\_check\_timeout](#input\_health\_check\_timeout) | Amount of time, in seconds, during which no response from a target means a failed health check. The range is 2–120 seconds. | `number` | `3` | no |
@@ -90,7 +89,6 @@ No modules.
 | <a name="input_net_lb_subnet_ids"></a> [net\_lb\_subnet\_ids](#input\_net\_lb\_subnet\_ids) | The subnet IDs in the VPC to host the load balancer in. | `list(string)` | n/a | yes |
 | <a name="input_net_vault_subnet_ids"></a> [net\_vault\_subnet\_ids](#input\_net\_vault\_subnet\_ids) | (required) The subnet IDs in the VPC to host the Vault servers in | `list(string)` | n/a | yes |
 | <a name="input_net_vpc_id"></a> [net\_vpc\_id](#input\_net\_vpc\_id) | (required) The VPC ID to host the cluster in | `string` | n/a | yes |
-| <a name="input_friendly_name_prefix"></a> [resource\_name\_prefix](#input\_resource\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | A map containing tags to assign to all resources | `map(string)` | `{}` | no |
 | <a name="input_sm_vault_license_arn"></a> [sm\_vault\_license\_arn](#input\_sm\_vault\_license\_arn) | The ARN of the license secret in AWS Secrets Manager | `string` | n/a | yes |
 | <a name="input_sm_vault_tls_ca_bundle"></a> [sm\_vault\_tls\_ca\_bundle](#input\_sm\_vault\_tls\_ca\_bundle) | (required) The ARN of the CA bundle secret in AWS Secrets Manager | `string` | n/a | yes |
@@ -120,13 +118,16 @@ No modules.
 | <a name="input_vault_tls_require_and_verify_client_cert"></a> [vault\_tls\_require\_and\_verify\_client\_cert](#input\_vault\_tls\_require\_and\_verify\_client\_cert) | Require a client to present a client certificate that validates against system CAs | `bool` | `false` | no |
 | <a name="input_vault_user_name"></a> [vault\_user\_name](#input\_vault\_user\_name) | Name of system user to own Vault files and processes | `string` | `"vault"` | no |
 | <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | The version of Vault to use | `string` | `"1.17.0+ent"` | no |
-| <a name="input_vm_disk_configuration"></a> [vm\_disk\_configuration](#input\_vm\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      volume_iops           = number<br>      volume_throughput     = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_iops": 3000,<br>  "volume_size": 100,<br>  "volume_throughput": 125,<br>  "volume_type": "gp3"<br>}</pre> | no |
+| <a name="input_vm_boot_disk_configuration"></a> [vm\_boot\_disk\_configuration](#input\_vm\_boot\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_size": 30,<br>  "volume_type": "gp3"<br>}</pre> | no |
 | <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | The AMI of the image to use | `string` | `null` | no |
 | <a name="input_vm_instance_type"></a> [vm\_instance\_type](#input\_vm\_instance\_type) | The machine type to use for the Vault nodes | `string` | `"m7i.large"` | no |
 | <a name="input_vm_key_pair_name"></a> [vm\_key\_pair\_name](#input\_vm\_key\_pair\_name) | The machine SSH key pair name to use for the cluster nodes | `string` | `null` | no |
+| <a name="input_vm_vault_audit_disk_configuration"></a> [vm\_vault\_audit\_disk\_configuration](#input\_vm\_vault\_audit\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_size": 50,<br>  "volume_type": "gp3"<br>}</pre> | no |
+| <a name="input_vm_vault_data_disk_configuration"></a> [vm\_vault\_data\_disk\_configuration](#input\_vm\_vault\_data\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      volume_iops           = number<br>      volume_throughput     = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_iops": 3000,<br>  "volume_size": 100,<br>  "volume_throughput": 125,<br>  "volume_type": "gp3"<br>}</pre> | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
+| <a name="output_vault_cli_config"></a> [vault\_cli\_config](#output\_vault\_cli\_config) | Environment variables to configure the Vault CLI |
 | <a name="output_vault_load_balancer_name"></a> [vault\_load\_balancer\_name](#output\_vault\_load\_balancer\_name) | The DNS name of the load balancer. |
