@@ -68,7 +68,7 @@ variable "vault_seal_awskms_region" {
 variable "vault_version" {
   type        = string
   description = "The version of Vault to use"
-  default     = "1.17.0+ent"
+  default     = "1.17.3+ent"
 }
 
 variable "vault_disable_mlock" {
