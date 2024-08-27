@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_iam_role" "vault_iam_role" {
   name                 = format("%s-role", var.friendly_name_prefix)
   path                 = var.iam_role_path

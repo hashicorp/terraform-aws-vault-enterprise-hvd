@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "vault_load_balancer_name" {
   value       = var.load_balancing_scheme == "NONE" ? null : aws_lb.vault_lb[0].dns_name
   description = "The DNS name of the load balancer."

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "main" {
   count       = 1 # var.security_group_ids == null ? 1 : 0
   name        = format("%s-sg", var.friendly_name_prefix)

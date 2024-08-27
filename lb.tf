@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_lb_target_group" "vault_api" {
   count                = var.load_balancing_scheme == "NONE" ? 0 : 1
   name                 = format("%s-vault", var.friendly_name_prefix)
