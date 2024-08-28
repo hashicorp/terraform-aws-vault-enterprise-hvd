@@ -1,6 +1,6 @@
-# HashiCorp Validated Design (HVD) — Vault Enterprise on AWS
+# Vault Enterprise HVD on AWS EC2
 
-This Terraform module deploys an HVD-aligned Vault Enterprise cluster on AWS.
+Terraform module aligned with HashiCorp Validated Designs (HVD) to deploy Vault Enterprise on Amazon Web Services (AWS) using EC2 instances. This module deploys Vault Enterprise with integrated storage.
 
 ![HVD Vault Architecture diagram](https://raw.githubusercontent.com/hashicorp/terraform-aws-vault-enterprise-hvd/main/docs/images/080-hvd-vault-networking-diagram.png "HVD Vault Architecture diagram")
 
