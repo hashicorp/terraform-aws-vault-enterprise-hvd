@@ -2,7 +2,7 @@
 
 This Terraform module deploys an HVD-aligned Vault Enterprise cluster on AWS.
 
-![HVD Vault Architecture diagram](./docs/images/080-hvd-vault-networking-diagram.png "HVD Vault Architecture diagram")
+![HVD Vault Architecture diagram](https://raw.githubusercontent.com/hashicorp/terraform-aws-vault-enterprise-hvd/main/docs/images/080-hvd-vault-networking-diagram.png "HVD Vault Architecture diagram")
 
 ## Prerequisites
 
