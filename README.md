@@ -29,6 +29,15 @@ Upon first deployment, Vault servers will auto-join and form a fresh cluster. Th
 Example deployment scenarios can be found in the [`examples`](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/tree/main/examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
 
 <!-- BEGIN_TF_DOCS -->
+## Module support
+
+This open source software is maintained by the HashiCorp Technical Field Organization, independently of our enterprise products. While our Support Engineering team provides dedicated support for our enterprise offerings, this open source software is not included.
+
+- For help using this open source software, please engage your account team.
+- To report bugs/issues with this open source software, please open them directly against this code repository using the GitHub issues feature.
+
+Please note that there is no official Service Level Agreement (SLA) for support of this software as a HashiCorp customer. This software falls under the definition of Community Software/Versions in your Agreement. We appreciate your understanding and collaboration in improving our open source projects.
+
 ## Requirements
 
 No requirements.
@@ -38,10 +47,6 @@ No requirements.
 | Name | Version |
 |------|---------|
 | <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
-
-## Modules
-
-No modules.
 
 ## Resources
 
@@ -104,7 +109,7 @@ No modules.
 | <a name="input_vault_enable_ui"></a> [vault\_enable\_ui](#input\_vault\_enable\_ui) | Enable the Vault UI | `bool` | `true` | no |
 | <a name="input_vault_fqdn"></a> [vault\_fqdn](#input\_vault\_fqdn) | Fully qualified domain name to use for joining peer nodes and optionally DNS | `string` | n/a | yes |
 | <a name="input_vault_group_name"></a> [vault\_group\_name](#input\_vault\_group\_name) | Name of group to own Vault files and processes | `string` | `"vault"` | no |
-| <a name="input_vault_health_endpoints"></a> [vault\_health\_endpoints](#input\_vault\_health\_endpoints) | The status codes to return when querying Vault's sys/health endpoint | `map(string)` | <pre>{<br>  "activecode": "200",<br>  "drsecondarycode": "472",<br>  "performancestandbycode": "473",<br>  "perfstandbyok": "true",<br>  "sealedcode": "503",<br>  "standbycode": "429",<br>  "standbyok": "true",<br>  "uninitcode": "200"<br>}</pre> | no |
+| <a name="input_vault_health_endpoints"></a> [vault\_health\_endpoints](#input\_vault\_health\_endpoints) | The status codes to return when querying Vault's sys/health endpoint | `map(string)` | <pre>{<br/>  "activecode": "200",<br/>  "drsecondarycode": "472",<br/>  "performancestandbycode": "473",<br/>  "perfstandbyok": "true",<br/>  "sealedcode": "503",<br/>  "standbycode": "429",<br/>  "standbyok": "true",<br/>  "uninitcode": "200"<br/>}</pre> | no |
 | <a name="input_vault_max_lease_ttl_duration"></a> [vault\_max\_lease\_ttl\_duration](#input\_vault\_max\_lease\_ttl\_duration) | The max lease TTL expressed as a time duration in hours, minutes and/or seconds (e.g. `4h30m10s`) | `string` | `"768h"` | no |
 | <a name="input_vault_plugin_urls"></a> [vault\_plugin\_urls](#input\_vault\_plugin\_urls) | (optional list) List of Vault plugin fully qualified URLs (example ["https://releases.hashicorp.com/terraform-provider-oraclepaas/1.5.3/terraform-provider-oraclepaas_1.5.3_linux_amd64.zip"] for deployment to Vault plugins directory) | `list(string)` | `[]` | no |
 | <a name="input_vault_port_api"></a> [vault\_port\_api](#input\_vault\_port\_api) | The port the Vault API will listen on | `string` | `"8200"` | no |
@@ -117,13 +122,13 @@ No modules.
 | <a name="input_vault_tls_disable_client_certs"></a> [vault\_tls\_disable\_client\_certs](#input\_vault\_tls\_disable\_client\_certs) | Disable client authentication for the Vault listener. Must be enabled when tls auth method is used. | `bool` | `true` | no |
 | <a name="input_vault_tls_require_and_verify_client_cert"></a> [vault\_tls\_require\_and\_verify\_client\_cert](#input\_vault\_tls\_require\_and\_verify\_client\_cert) | Require a client to present a client certificate that validates against system CAs | `bool` | `false` | no |
 | <a name="input_vault_user_name"></a> [vault\_user\_name](#input\_vault\_user\_name) | Name of system user to own Vault files and processes | `string` | `"vault"` | no |
-| <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | The version of Vault to use | `string` | `"1.17.0+ent"` | no |
-| <a name="input_vm_boot_disk_configuration"></a> [vm\_boot\_disk\_configuration](#input\_vm\_boot\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_size": 30,<br>  "volume_type": "gp3"<br>}</pre> | no |
+| <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | The version of Vault to use | `string` | `"1.17.3+ent"` | no |
+| <a name="input_vm_boot_disk_configuration"></a> [vm\_boot\_disk\_configuration](#input\_vm\_boot\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 30,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
 | <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | The AMI of the image to use | `string` | `null` | no |
 | <a name="input_vm_instance_type"></a> [vm\_instance\_type](#input\_vm\_instance\_type) | The machine type to use for the Vault nodes | `string` | `"m7i.large"` | no |
 | <a name="input_vm_key_pair_name"></a> [vm\_key\_pair\_name](#input\_vm\_key\_pair\_name) | The machine SSH key pair name to use for the cluster nodes | `string` | `null` | no |
-| <a name="input_vm_vault_audit_disk_configuration"></a> [vm\_vault\_audit\_disk\_configuration](#input\_vm\_vault\_audit\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_size": 50,<br>  "volume_type": "gp3"<br>}</pre> | no |
-| <a name="input_vm_vault_data_disk_configuration"></a> [vm\_vault\_data\_disk\_configuration](#input\_vm\_vault\_data\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br>    {<br>      volume_type           = string<br>      volume_size           = number<br>      volume_iops           = number<br>      volume_throughput     = number<br>      delete_on_termination = bool<br>      encrypted             = bool<br>    }<br>  )</pre> | <pre>{<br>  "delete_on_termination": true,<br>  "encrypted": true,<br>  "volume_iops": 3000,<br>  "volume_size": 100,<br>  "volume_throughput": 125,<br>  "volume_type": "gp3"<br>}</pre> | no |
+| <a name="input_vm_vault_audit_disk_configuration"></a> [vm\_vault\_audit\_disk\_configuration](#input\_vm\_vault\_audit\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 50,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
+| <a name="input_vm_vault_data_disk_configuration"></a> [vm\_vault\_data\_disk\_configuration](#input\_vm\_vault\_data\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      volume_iops           = number<br/>      volume_throughput     = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_iops": 3000,<br/>  "volume_size": 100,<br/>  "volume_throughput": 125,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
 
 ## Outputs
 
@@ -131,3 +136,4 @@ No modules.
 |------|-------------|
 | <a name="output_vault_cli_config"></a> [vault\_cli\_config](#output\_vault\_cli\_config) | Environment variables to configure the Vault CLI |
 | <a name="output_vault_load_balancer_name"></a> [vault\_load\_balancer\_name](#output\_vault\_load\_balancer\_name) | The DNS name of the load balancer. |
+<!-- END_TF_DOCS -->
