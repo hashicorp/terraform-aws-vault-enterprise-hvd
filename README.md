@@ -2,23 +2,23 @@
 
 Terraform module aligned with HashiCorp Validated Designs (HVD) to deploy Vault Enterprise on Amazon Web Services (AWS) using EC2 instances. This module deploys Vault Enterprise with integrated storage.
 
-![HVD Vault Architecture diagram](https://raw.githubusercontent.com/hashicorp/terraform-aws-vault-enterprise-hvd/main/docs/images/080-hvd-vault-networking-diagram.png "HVD Vault Architecture diagram")
+![HVD Vault Architecture diagram](https://raw.githubusercontent.com/hashicorp/terraform-aws-vault-enterprise-hvd/main/docs/images/080-hvd-vault-networking-diagram.png)
 
 ## Prerequisites
 
 This module requires the following to already be in place in AWS:
 
-* A [VPC](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-subnet-basics) with the following:
-  * [3 private subnet(s)](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#subnet-basics) in distinct Availability Zones
-  * [NAT Gateway(s)](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to support product installation and OS patching
-* A dedicated [KMS Key](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html) to support auto-unseal
-* TLS certificate with intermediate certs, certificate private key and CA certificate (required for privately signed cert)
-* Access to [Secrets Manager](https://aws.amazon.com/secrets-manager/) for initial secrets such as product license and TLS certificate material
-* AWS API credentials for Terraform to deploy:
-  * AWS Autoscaling Group, Launch Template and Placement Group
-  * AWS IAM Roles and Instance Profile
-  * AWS Load Balancer, Listener and Target Group
-  * AWS Security Group and Security Group Rules
+- A [VPC](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#vpc-subnet-basics) with the following:
+  - [3 private subnet(s)](https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Subnets.html#subnet-basics) in distinct Availability Zones
+  - [NAT Gateway(s)](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html) to support product installation and OS patching
+- A dedicated [KMS Key](https://docs.aws.amazon.com/kms/latest/developerguide/create-keys.html) to support auto-unseal
+- TLS certificate with intermediate certs, certificate private key and CA certificate (required for privately signed cert)
+- Access to [Secrets Manager](https://aws.amazon.com/secrets-manager/) for initial secrets such as product license and TLS certificate material
+- AWS API credentials for Terraform to deploy:
+  - AWS Autoscaling Group, Launch Template and Placement Group
+  - AWS IAM Roles and Instance Profile
+  - AWS Load Balancer, Listener and Target Group
+  - AWS Security Group and Security Group Rules
 
 ## Deployment
 
@@ -26,7 +26,7 @@ Upon first deployment, Vault servers will auto-join and form a fresh cluster. Th
 
 ## Examples
 
-Example deployment scenarios can be found in the [`examples`](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/tree/main/examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
+Example deployment scenarios can be found in the `examples` directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
 
 <!-- BEGIN_TF_DOCS -->
 ## Module support
