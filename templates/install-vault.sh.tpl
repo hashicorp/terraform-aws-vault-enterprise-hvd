@@ -144,7 +144,7 @@ function fetch_tls_certificates {
 
   %{ if sm_vault_tls_ca_bundle != "NONE" ~}
   log "INFO" "Retrieving CA certificate '${sm_vault_tls_ca_bundle}' from Secrets Manager."
-  aws secretsmanager get-secret-value --secret-id {sm_vault_tls_ca_bundle} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/ca.pem
+  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_ca_bundle} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/ca.pem
   %{ endif ~}
 
   log "INFO" "Setting certificate file permissions and ownership"
