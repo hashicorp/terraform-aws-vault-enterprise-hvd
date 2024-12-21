@@ -137,7 +137,7 @@ function install_vault_plugins {
 # fetch_tls_certificates fetches the TLS certificates from cloud's secret manager
 function fetch_tls_certificates {
   log "INFO" "Retrieving TLS certificate '${sm_vault_tls_cert_arn}' from Secrets Manager."
-  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/cert.pem > $VAULT_DIR_TLS/cert.pem
+  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/cert.pem
 
   log "INFO" "Retrieving TLS private key '${sm_vault_tls_cert_key_arn}' from Secrets Manager."
   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_key_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/key.pem
