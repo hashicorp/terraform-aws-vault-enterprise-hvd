@@ -1,8 +1,15 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+resource "random_string" "random_6_chars" {
+  length  = 6
+  special = false
+  upper   = true
+  lower   = true
+}
+
 resource "aws_iam_role" "vault_iam_role" {
-  name                 = format("%s-role", var.friendly_name_prefix)
+  name                 = format("%s-role-%s", var.friendly_name_prefix, random_string.random_6_chars.result)
   path                 = var.iam_role_path
   assume_role_policy   = file("${path.module}/templates/vault-server-role.json.tpl")
   permissions_boundary = var.iam_role_permissions_boundary_arn
