@@ -317,20 +317,25 @@ exit_script() {
 
 function prepare_disk() {
   local device_name="$1"
-  log "DEBUG" "prepare_disk - device_name; $${device_name}"
+  log "DEBUG" "prepare_disk - device_name: $${device_name}"
 
   local device_mountpoint="$2"
-  log "DEBUG" "prepare_disk - device_mountpoint; $${device_mountpoint}"
+  log "DEBUG" "prepare_disk - device_mountpoint: $${device_mountpoint}"
 
   local device_label="$3"
-  log "DEBUG" "prepare_disk - device_label; $${device_label}"
+  log "DEBUG" "prepare_disk - device_label: $${device_label}"
 
   sleep 20
   local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
-  log "DEBUG" "prepare_disk - ebs_volume_id; $${ebs_volume_id}"
+  log "DEBUG" "prepare_disk - ebs_volume_id: $${ebs_volume_id}"
+
+  if [[ -z "$${ebs_volume_id}" ]]; then
+    log "ERROR" "No EBS volume found attached to device $${device_name}"
+    exit_script 1
+  fi
 
   local device_id=$(readlink -f /dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_$${ebs_volume_id})
-  log "DEBUG" "prepare_disk - device_id; $${device_id}"
+  log "DEBUG" "prepare_disk - device_id: $${device_id}"
 
   mkdir $device_mountpoint
 
