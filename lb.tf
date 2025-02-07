@@ -49,4 +49,5 @@ resource "aws_lb" "vault_lb" {
   load_balancer_type = "network"
   subnets            = var.net_lb_subnet_ids == null ? var.net_vault_subnet_ids : var.net_lb_subnet_ids
   tags               = var.resource_tags
+  security_groups    = [aws_security_group.main[0].id]
 }
