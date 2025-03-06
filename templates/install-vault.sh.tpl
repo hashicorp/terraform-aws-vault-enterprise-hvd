@@ -217,7 +217,7 @@ plugin_directory = "$VAULT_DIR_PLUGINS"
 %{ if vault_telemetry_config != {} ~}
 telemetry {
 %{ for key, value in vault_telemetry_config ~}
-	${key} = "${value}"
+  ${key} = "${value}"
 %{ endfor ~}
 }
 %{ endif ~}
