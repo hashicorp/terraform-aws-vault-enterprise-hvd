@@ -28,7 +28,7 @@ locals {
     vault_max_lease_ttl_duration             = var.vault_max_lease_ttl_duration,
     vault_port_api                           = var.vault_port_api,
     vault_port_cluster                       = var.vault_port_cluster,
-    vault_telemetry_config                   = var.vault_telemetry_config,
+    vault_telemetry_config                   = var.vault_telemetry_config == null ? "NONE" : var.vault_telemetry_config,
     vault_tls_require_and_verify_client_cert = var.vault_tls_require_and_verify_client_cert,
     vault_tls_disable_client_certs           = var.vault_tls_disable_client_certs,
     vault_seal_type                          = var.vault_seal_type,
