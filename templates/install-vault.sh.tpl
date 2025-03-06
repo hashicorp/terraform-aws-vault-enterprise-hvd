@@ -214,6 +214,13 @@ api_addr      = "https://$FULL_HOSTNAME:${vault_port_api}"
 cluster_addr  = "https://$FULL_HOSTNAME:${vault_port_cluster}"
 
 plugin_directory = "$VAULT_DIR_PLUGINS"
+%{ if vault_telemetry_config != {} ~}
+telemetry {
+%{ for key, value in vault_telemetry_config ~}
+	${key} = "${value}"
+%{ endfor ~}
+}
+%{ endif ~}
 EOF
 
   log "INFO" "Setting Vault server config file permissions and ownership"
