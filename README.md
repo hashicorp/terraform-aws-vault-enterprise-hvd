@@ -39,6 +39,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 
 <!-- BEGIN_TF_DOCS -->
 
+
 ## Providers
 
 | Name | Version |
@@ -116,7 +117,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_vault_seal_awskms_region"></a> [vault\_seal\_awskms\_region](#input\_vault\_seal\_awskms\_region) | The region the KMS is in. Leave null if in the same region as everything else | `string` | `null` | no |
 | <a name="input_vault_seal_type"></a> [vault\_seal\_type](#input\_vault\_seal\_type) | The seal type to use for Vault | `string` | `"awskms"` | no |
 | <a name="input_vault_snapshots_bucket_arn"></a> [vault\_snapshots\_bucket\_arn](#input\_vault\_snapshots\_bucket\_arn) | The ARN of the S3 bucket for auto-snapshots | `string` | `null` | no |
-| <a name="input_vault_telemetry_config"></a> [vault\_telemetry\_config](#input\_vault\_telemetry\_config) | Enable telemetry for Vault | `bool` | `{}` | no |
+| <a name="input_vault_telemetry_config"></a> [vault\_telemetry\_config](#input\_vault\_telemetry\_config) | Enable telemetry for Vault | `map(string)` | `null` | no |
 | <a name="input_vault_tls_disable_client_certs"></a> [vault\_tls\_disable\_client\_certs](#input\_vault\_tls\_disable\_client\_certs) | Disable client authentication for the Vault listener. Must be enabled when tls auth method is used. | `bool` | `true` | no |
 | <a name="input_vault_tls_require_and_verify_client_cert"></a> [vault\_tls\_require\_and\_verify\_client\_cert](#input\_vault\_tls\_require\_and\_verify\_client\_cert) | Require a client to present a client certificate that validates against system CAs | `bool` | `false` | no |
 | <a name="input_vault_user_name"></a> [vault\_user\_name](#input\_vault\_user\_name) | Name of system user to own Vault files and processes | `string` | `"vault"` | no |

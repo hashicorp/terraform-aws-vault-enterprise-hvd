@@ -117,12 +117,12 @@ variable "vault_port_cluster" {
   default     = "8201"
 }
 variable "vault_telemetry_config" {
-  type        = bool
+  type        = map(string)
   description = "Enable telemetry for Vault"
-  default     = {}
+  default     = null
 
   validation {
-    condition     = var.vault_telemetry_config == {} || tomap(var.vault_telemetry_config)
+    condition     = var.vault_telemetry_config == null || tomap(var.vault_telemetry_config)
     error_message = "Telemetry config must be provided as a map of key-value pairs."
   }
 
