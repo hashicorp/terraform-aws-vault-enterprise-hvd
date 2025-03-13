@@ -116,7 +116,17 @@ variable "vault_port_cluster" {
   description = "The port the Vault cluster port will listen on"
   default     = "8201"
 }
+variable "vault_telemetry_config" {
+  type        = map(string)
+  description = "Enable telemetry for Vault"
+  default     = null
 
+  validation {
+    condition     = var.vault_telemetry_config == null || tomap(var.vault_telemetry_config)
+    error_message = "Telemetry config must be provided as a map of key-value pairs."
+  }
+
+}
 variable "vault_tls_disable_client_certs" {
   type        = bool
   description = "Disable client authentication for the Vault listener. Must be enabled when tls auth method is used."
