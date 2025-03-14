@@ -122,7 +122,7 @@ variable "vault_telemetry_config" {
   default     = null
 
   validation {
-    condition     = var.vault_telemetry_config == null || tomap(var.vault_telemetry_config)
+    condition     = var.vault_telemetry_config == null || can(tomap(var.vault_telemetry_config))
     error_message = "Telemetry config must be provided as a map of key-value pairs."
   }
 
