@@ -1,0 +1,27 @@
+name: terraform validate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        terraform_version: [~1.9.0, ~1.10.0, ~1.11.0]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ matrix.terraform_version }}
+      - name: Initialize Terraform
+        run: terraform init
+      - name: Validate Terraform
+        run: terraform validate
