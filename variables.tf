@@ -453,3 +453,9 @@ variable "health_check_deregistration_delay" {
     error_message = "The health check deregistration delay must be between 0 and 3600."
   }
 }
+
+variable "stickiness_enabled" {
+  type        = bool
+  description = "Enable sticky sessions by client IP address for the load balancer."
+  default     = true
+}
