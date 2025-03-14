@@ -181,8 +181,9 @@ listener "tcp" {
 }
 
 storage "raft" {
-  path    = "$VAULT_DIR_DATA"
-  node_id = "$INSTANCE_ID"
+  path                   = "$VAULT_DIR_DATA"
+  node_id                = "$INSTANCE_ID"
+  performance_multiplier = ${vault_raft_performance_multiplier}
 
   autopilot_redundancy_zone = "$AVAILABILITY_ZONE"
 
