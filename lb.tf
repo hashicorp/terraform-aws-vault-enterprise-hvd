@@ -27,6 +27,11 @@ resource "aws_lb_target_group" "vault_api" {
       var.vault_health_endpoints["sealedcode"],
     var.vault_health_endpoints["uninitcode"])
   }
+
+  stickiness {
+    type    = "source_ip" # Only option for NLBs
+    enabled = var.stickiness_enabled
+  }
 }
 
 resource "aws_lb_listener" "vault_api" {
