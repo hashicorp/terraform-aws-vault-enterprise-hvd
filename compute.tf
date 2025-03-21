@@ -33,6 +33,7 @@ locals {
     vault_tls_disable_client_certs           = var.vault_tls_disable_client_certs,
     vault_seal_type                          = var.vault_seal_type,
     vault_seal_attributes                    = local.vault_seal_attributes,
+    vault_raft_performance_multiplier        = var.vault_raft_performance_multiplier
 
     vault_plugin_urls   = var.vault_plugin_urls
     auto_join_tag_key   = var.vault_raft_auto_join_tag == null ? "aws:autoscaling:groupName" : keys(var.vault_raft_auto_join_tag)[0],
