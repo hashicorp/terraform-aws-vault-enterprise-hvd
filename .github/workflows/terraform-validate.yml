@@ -8,6 +8,6 @@ on:
       - main
   workflow_dispatch:
 
-jobs:
+tf-validate:
   sync:
     uses: hashicorp/hvd-module-gha/.github/workflows/terraform-validate.yml@main
