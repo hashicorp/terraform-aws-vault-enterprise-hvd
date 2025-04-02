@@ -117,12 +117,12 @@ variable "vault_port_cluster" {
   default     = "8201"
 }
 variable "vault_telemetry_config" {
-  type        = bool
+  type        = map(string)
   description = "Enable telemetry for Vault"
-  default     = {}
+  default     = null
 
   validation {
-    condition     = var.vault_telemetry_config != {} && tomap(var.vault_telemetry_config)
+    condition     = var.vault_telemetry_config == null || can(tomap(var.vault_telemetry_config))
     error_message = "Telemetry config must be provided as a map of key-value pairs."
   }
 
@@ -154,6 +154,22 @@ variable "vault_raft_auto_join_tag" {
   type        = map(string)
   description = "A map containing a single tag which will be used by Vault to join other nodes to the cluster. If left blank, the module will use the first entry in `tags`"
   default     = null
+}
+
+variable "vault_raft_performance_multiplier" {
+  description = "Raft performance multiplier value. Defaults to 0, which is the default Vault value."
+  type        = number
+  default     = 0
+
+  validation {
+    condition     = var.vault_raft_performance_multiplier >= 0 && var.vault_raft_performance_multiplier <= 10
+    error_message = "Raft performance multiplier must be 0 (use Vault default) or an integer between 1 and 10."
+  }
+
+  validation {
+    condition     = var.vault_raft_performance_multiplier == floor(var.vault_raft_performance_multiplier)
+    error_message = "Raft performance multiplier must be an integer."
+  }
 }
 
 #------------------------------------------------------------------------------
@@ -452,4 +468,10 @@ variable "health_check_deregistration_delay" {
     condition     = var.health_check_deregistration_delay >= 0 && var.health_check_deregistration_delay <= 3600
     error_message = "The health check deregistration delay must be between 0 and 3600."
   }
+}
+
+variable "stickiness_enabled" {
+  type        = bool
+  description = "Enable sticky sessions by client IP address for the load balancer."
+  default     = true
 }
