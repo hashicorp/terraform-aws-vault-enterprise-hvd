@@ -26,7 +26,7 @@ Upon first deployment, Vault servers will auto-join and form a fresh cluster. Th
 
 ## Examples
 
-Example deployment scenarios can be found in the [`examples`](./examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
+Example deployment scenarios can be found in the [`examples`](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.2.0/examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
 
 ## Module support
 
