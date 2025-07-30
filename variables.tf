@@ -283,10 +283,31 @@ variable "net_ingress_vault_security_group_ids" {
 }
 
 #-----------------------------------------------------------------------------------
-# DNS
+# DNS Route53
 #-----------------------------------------------------------------------------------
 
-# TBD
+variable "create_route53_vault_dns_record" {
+  type        = bool
+  description = "Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required."
+  default     = false
+}
+
+variable "route53_vault_hosted_zone_name" {
+  type        = string
+  description = "Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`."
+  default     = null
+
+  validation {
+    condition     = var.create_route53_vault_dns_record ? var.route53_vault_hosted_zone_name != null : true
+    error_message = "Value must be set when `create_route53_vault_dns_record` is `true`."
+  }
+}
+
+variable "route53_vault_hosted_zone_is_private" {
+  type        = bool
+  description = "Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone."
+  default     = false
+}
 
 
 #-----------------------------------------------------------------------------------
