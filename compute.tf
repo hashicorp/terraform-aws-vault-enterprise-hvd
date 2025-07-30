@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: MPL-2.0
 
 locals {
+  vault_install_tpl           = var.custom_install_vault_template != null ? "${path.cwd}/templates/${var.custom_install_vault_template}" : "${path.module}/templates/install-vault.sh.tpl"
+  user_data_template_rendered = templatefile(local.vault_install_tpl, local.vault_user_data_template_vars)
   vault_user_data_template_vars = {
     # system paths and settings
     systemd_dir              = var.systemd_dir,
@@ -38,6 +40,7 @@ locals {
     vault_plugin_urls   = var.vault_plugin_urls
     auto_join_tag_key   = var.vault_raft_auto_join_tag == null ? "aws:autoscaling:groupName" : keys(var.vault_raft_auto_join_tag)[0],
     auto_join_tag_value = var.vault_raft_auto_join_tag == null ? format("%s-asg", var.friendly_name_prefix) : values(var.vault_raft_auto_join_tag)[0],
+
   }
 }
 
@@ -49,13 +52,7 @@ resource "aws_launch_template" "main" {
 
   update_default_version = true
   tags                   = var.resource_tags
-
-  user_data = base64encode(
-    templatefile(
-      "${path.module}/templates/install-vault.sh.tpl",
-      local.vault_user_data_template_vars
-    )
-  )
+  user_data              = base64gzip(local.user_data_template_rendered)
 
   # root
   block_device_mappings {
