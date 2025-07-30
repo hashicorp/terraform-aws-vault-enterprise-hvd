@@ -38,13 +38,17 @@ This open source software is maintained by the HashiCorp Technical Field Organiz
 Please note that there is no official Service Level Agreement (SLA) for support of this software as a HashiCorp customer. This software falls under the definition of Community Software/Versions in your Agreement. We appreciate your understanding and collaboration in improving our open source projects.
 
 <!-- BEGIN_TF_DOCS -->
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
 ## Resources
 
@@ -59,6 +63,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_lb_listener.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_target_group.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_placement_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/placement_group) | resource |
+| [aws_route53_record.alias_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_security_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.egress_all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_ssh_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
@@ -68,6 +73,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_ami.ubuntu_jammy_22_04](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_kms_key.vault_unseal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_route53_zone.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -87,6 +93,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_asg_health_check_grace_period"></a> [asg\_health\_check\_grace\_period](#input\_asg\_health\_check\_grace\_period) | The amount of time to expire before the autoscaling group terminates an unhealthy node is terminated | `string` | `600` | no |
 | <a name="input_asg_health_check_type"></a> [asg\_health\_check\_type](#input\_asg\_health\_check\_type) | Defines how autoscaling health checking is done | `string` | `"EC2"` | no |
 | <a name="input_asg_node_count"></a> [asg\_node\_count](#input\_asg\_node\_count) | The number of nodes to create in the pool. | `number` | `6` | no |
+| <a name="input_create_route53_vault_dns_record"></a> [create\_route53\_vault\_dns\_record](#input\_create\_route53\_vault\_dns\_record) | Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required. | `bool` | `false` | no |
 | <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_health_check_deregistration_delay"></a> [health\_check\_deregistration\_delay](#input\_health\_check\_deregistration\_delay) | Amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused. The range is 0-3600 seconds. | `number` | `15` | no |
 | <a name="input_health_check_interval"></a> [health\_check\_interval](#input\_health\_check\_interval) | Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. | `number` | `5` | no |
@@ -99,6 +106,8 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_net_ingress_vault_cidr_blocks"></a> [net\_ingress\_vault\_cidr\_blocks](#input\_net\_ingress\_vault\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_vault_security_group_ids"></a> [net\_ingress\_vault\_security\_group\_ids](#input\_net\_ingress\_vault\_security\_group\_ids) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | A map containing tags to assign to all resources | `map(string)` | `{}` | no |
+| <a name="input_route53_vault_hosted_zone_is_private"></a> [route53\_vault\_hosted\_zone\_is\_private](#input\_route53\_vault\_hosted\_zone\_is\_private) | Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone. | `bool` | `false` | no |
+| <a name="input_route53_vault_hosted_zone_name"></a> [route53\_vault\_hosted\_zone\_name](#input\_route53\_vault\_hosted\_zone\_name) | Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`. | `string` | `null` | no |
 | <a name="input_stickiness_enabled"></a> [stickiness\_enabled](#input\_stickiness\_enabled) | Enable sticky sessions by client IP address for the load balancer. | `bool` | `true` | no |
 | <a name="input_systemd_dir"></a> [systemd\_dir](#input\_systemd\_dir) | Path to systemd directory for unit files | `string` | `"/lib/systemd/system"` | no |
 | <a name="input_vault_default_lease_ttl_duration"></a> [vault\_default\_lease\_ttl\_duration](#input\_vault\_default\_lease\_ttl\_duration) | The default lease TTL expressed as a time duration in hours, minutes and/or seconds (e.g. `4h30m10s`) | `string` | `"1h"` | no |
