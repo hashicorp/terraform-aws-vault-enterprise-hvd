@@ -9,7 +9,7 @@ data "aws_route53_zone" "vault" {
 }
 
 resource "aws_route53_record" "alias_record" {
-  count = var.route53_vault_hosted_zone_name != null && var.create_route53_vault_dns_record ? ? 0 : 1
+  count = var.route53_vault_hosted_zone_name != null && var.create_route53_vault_dns_record ? 0 : 1
 
   name    = var.vault_fqdn
   zone_id = data.aws_route53_zone.vault[0].zone_id
