@@ -3,6 +3,7 @@ set -xeuo pipefail
 
 LOGFILE="/var/log/vault-cloud-init.log"
 SYSTEMD_DIR="${systemd_dir}"
+
 VAULT_DIR_CONFIG="${vault_dir_config}"
 VAULT_DIR_TLS="${vault_dir_config}/tls"
 VAULT_DIR_DATA="${vault_dir_home}/data"
@@ -12,7 +13,8 @@ VAULT_DIR_LOGS="${vault_dir_logs}"
 VAULT_DIR_BIN="${vault_dir_bin}"
 VAULT_USER="${vault_user_name}"
 VAULT_GROUP="${vault_group_name}"
-VAULT_INSTALL_URL="${vault_install_url}"
+#VAULT_INSTALL_URL="${vault_install_url}"
+VAULT_VERSION="${vault_version}"
 REQUIRED_PACKAGES="unzip"
 ADDITIONAL_PACKAGES="${additional_package_names}"
 
@@ -23,6 +25,7 @@ function log {
   local log_entry="$timestamp [$level] - $message"
 
   echo "$log_entry" | tee -a "$LOGFILE"
+
 }
 
 function detect_os_distro {
@@ -110,12 +113,17 @@ function directory_create {
   done
 }
 
+function
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
+  export PRODUCT="vault"
+  export VERSION=$VAULT_VERSION
+  export OS_ARCH="linux_$( dpkg --print-architecture )"
+	export VAULT_INSTALL_URL="https://releases.hashicorp.com/${PRODUCT}/${VERSION}/${PRODUCT}_${VERSION}_${OS_ARCH}.zip"
   log "INFO" "Downloading Vault Enterprise binary"
   sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
 
-  log "INFO" "Unzipping Vault Enterprise binary to $VAULT_DIR_BIN"
+	log "INFO" "Unzipping Vault Enterprise binary to $VAULT_DIR_BIN"
   sudo unzip $VAULT_DIR_BIN/vault.zip vault -d $VAULT_DIR_BIN
   sudo unzip $VAULT_DIR_BIN/vault.zip -x vault -d $VAULT_DIR_LICENSE
 
@@ -334,8 +342,13 @@ function prepare_disk() {
   log "DEBUG" "prepare_disk - device_label; $${device_label}"
 
   local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
-  log "DEBUG" "prepare_disk - ebs_volume_id; $${ebs_volume_id}"
-
+  # add sleep in to wait longer for the disk attachment
+  sleep 20
+  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:Vol    umeId}' --region $REGION --output text | tr -d '-' )
+  if [[ -z "$${ebs_volume_id}" ]]; then
+    log "ERROR" "No EBS volume found attached to device $${device_name}"
+    exit_script 1
+  fi
   local device_id=$(readlink -f /dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_$${ebs_volume_id})
   log "DEBUG" "prepare_disk - device_id; $${device_id}"
 

@@ -22,8 +22,9 @@ locals {
     sm_vault_tls_ca_bundle    = var.sm_vault_tls_ca_bundle == null ? "NONE" : var.sm_vault_tls_ca_bundle
 
     # Vault settings
-    vault_fqdn                               = var.vault_fqdn,
-    vault_install_url                        = format("https://releases.hashicorp.com/vault/%s/vault_%s_linux_amd64.zip", var.vault_version, var.vault_version),
+    vault_fqdn    = var.vault_fqdn,
+    vault_version = var.vault_version,
+    #	vault_install_url                        = format("https://releases.hashicorp.com/vault/%s/vault_%s_linux_amd64.zip", var.vault_version, var.vault_version),
     vault_disable_mlock                      = var.vault_disable_mlock,
     vault_enable_ui                          = var.vault_enable_ui,
     vault_default_lease_ttl_duration         = var.vault_default_lease_ttl_duration,
