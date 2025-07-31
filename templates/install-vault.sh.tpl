@@ -122,9 +122,9 @@ function checksum_verify {
   export GNUPGHOME=./.gnupg
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 	log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -Os "https://releases.hashicorp.com/${PRODUCT}"/"${VAULT_VERSION}"/"${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
-  sudo curl -Os "https://releases.hashicorp.com/${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS
-  sudo curl -Os "https://releases.hashicorp.com/${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VAULT_VERSION}"/"${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
   # Verify the signature file is untampered.
   gpg --verify "${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig "${PRODUCT}"_"${VERSION}"_SHA256SUMS
 
