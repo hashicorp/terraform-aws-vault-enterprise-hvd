@@ -124,7 +124,7 @@ function checksum_verify {
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 
 	log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
   sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
   sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
   # Verify the signature file is untampered.
@@ -146,12 +146,12 @@ function checksum_verify {
 
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
-	#VAULT_INSTALL_URL="https://releases.hashicorp.com/${PRODUCT}/${VAULT_VERSION}/${PRODUCT}_${VAULT_VERSION}_${OS_ARCH}.zip"
+	#VAULT_INSTALL_URL="https://releases.hashicorp.com/$${PRODUCT}/$${VAULT_VERSION}/$${PRODUCT}_$${VAULT_VERSION}_$${OS_ARCH}.zip"
   #sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
   log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN} unzip and set permissions"
-	sudo unzip "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
-	sudo unzip "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
-	sudo rm -f "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
+	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
+	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
+	sudo rm -f "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
 
 	# Set the permissions for the Vault binary
 	sudo chmod 0755 $VAULT_DIR_BIN/vault
