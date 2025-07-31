@@ -131,7 +131,7 @@ function checksum_verify {
   gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
 
   # Verify the SHASUM matches the archive.
-  shasum -a 256 -c "${PRODUCT}"_"${VERSION}"_SHA256SUMS --ignore-missing
+  shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
 	if [[ $? -ne 0 ]]; then
 		log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
 		exit_script 1
