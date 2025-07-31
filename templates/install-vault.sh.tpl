@@ -13,10 +13,11 @@ VAULT_DIR_LOGS="${vault_dir_logs}"
 VAULT_DIR_BIN="${vault_dir_bin}"
 VAULT_USER="${vault_user_name}"
 VAULT_GROUP="${vault_group_name}"
-# VAULT_INSTALL_URL="$\{vault_install_url\}"
+# VAULT_INSTALL_URL="$${vault_install_url}"
 PRODUCT="vault"
 OS_ARCH="linux_$( dpkg --print-architecture )"
 VAULT_VERSION="${vault_version}"
+VERSION=$VAULT_VERSION
 REQUIRED_PACKAGES="unzip"
 ADDITIONAL_PACKAGES="${additional_package_names}"
 
@@ -121,23 +122,25 @@ function checksum_verify {
   log "INFO" "Verifying the integrity of the Vault binary."
   export GNUPGHOME=./.gnupg
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
+
 	log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VAULT_VERSION}"/"${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
   # Verify the signature file is untampered.
-  gpg --verify "${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig "${PRODUCT}"_"${VERSION}"_SHA256SUMS
+  gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
 
   # Verify the SHASUM matches the archive.
   shasum -a 256 -c "${PRODUCT}"_"${VERSION}"_SHA256SUMS --ignore-missing
 	if [[ $? -ne 0 ]]; then
-		log "ERROR" "Checksum verification failed for the ${PRODUCT} binary."
+		log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
 		exit_script 1
 	fi
 
-	log "INFO" "Checksum verification passed for the ${PRODUCT} binary."
+	log "INFO" "Checksum verification passed for the $${PRODUCT} binary."
+
 	# Remove the downloaded files to clean up
-	sudo rm -f "${PRODUCT}"_"${VERSION}"_SHA256SUMS "${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
+	sudo rm -f "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
 
 }
 
