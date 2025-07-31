@@ -148,7 +148,7 @@ function checksum_verify {
 function install_vault_binary {
 	#VAULT_INSTALL_URL="https://releases.hashicorp.com/$${PRODUCT}/$${VAULT_VERSION}/$${PRODUCT}_$${VAULT_VERSION}_$${OS_ARCH}.zip"
   #sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
-  log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN} unzip and set permissions"
+  log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN unzip and set permissions"
 	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
 	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
 	sudo rm -f "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
