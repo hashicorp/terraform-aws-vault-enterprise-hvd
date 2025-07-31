@@ -117,16 +117,16 @@ function directory_create {
 }
 
 function checksum_verify {
-#https://www.hashicorp.com/en/trust/security
-# checksum_verify downloads the $PRODUCT binary and verifies its integrity
-  log "INFO" "Verifying the integrity of the Vault binary."
+  # https://www.hashicorp.com/en/trust/security
+  # checksum_verify downloads the $$PRODUCT binary and verifies its integrity
+  log "INFO" "Verifying the integrity of the $${PRODUCT} binary."
   export GNUPGHOME=./.gnupg
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 
 	log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
-  sudo curl -Os https://releases.hashicorp.com/$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
   # Verify the signature file is untampered.
   gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
 
@@ -421,7 +421,7 @@ main() {
   log "INFO" "Creating directories for Vault config and data"
   directory_create
 
-	log "INFO" "Verifying checksum function"
+  log "INFO" "Verifying checksum function"
   checksum_verify
 
   log "INFO" "Installing Vault"
