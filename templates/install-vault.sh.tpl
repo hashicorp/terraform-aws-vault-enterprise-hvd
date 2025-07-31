@@ -14,6 +14,8 @@ VAULT_DIR_BIN="${vault_dir_bin}"
 VAULT_USER="${vault_user_name}"
 VAULT_GROUP="${vault_group_name}"
 #VAULT_INSTALL_URL="${vault_install_url}"
+PRODUCT="vault"
+OS_ARCH="linux_$( dpkg --print-architecture )"
 VAULT_VERSION="${vault_version}"
 REQUIRED_PACKAGES="unzip"
 ADDITIONAL_PACKAGES="${additional_package_names}"
@@ -113,21 +115,49 @@ function directory_create {
   done
 }
 
-function
+function checksum_verify {
+#https://www.hashicorp.com/en/trust/security
+# checksum_verify downloads the $PRODUCT binary and verifies its integrity
+  log "INFO" "Verifying the integrity of the Vault binary."
+  export GNUPGHOME=./.gnupg
+  sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
+	log "INFO" "Downloading Vault Enterprise binary"
+  sudo curl -Os https://releases.hashicorp.com/"${PRODUCT}"/"${VAULT_VERSION}"/"${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
+  sudo -Os https://releases.hashicorp.com/"${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS
+  sudo curl -Os https://releases.hashicorp.com/"${PRODUCT}"/"${VERSION}"/"${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
+  # Verify the signature file is untampered.
+  gpg --verify "${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig "${PRODUCT}"_"${VERSION}"_SHA256SUMS
+
+  # Verify the SHASUM matches the archive.
+  shasum -a 256 -c "${PRODUCT}"_"${VERSION}"_SHA256SUMS --ignore-missing
+	if [[ $? -ne 0 ]]; then
+		log "ERROR" "Checksum verification failed for the ${PRODUCT} binary."
+		exit_script 1
+	fi
+
+	log "INFO" "Checksum verification passed for the ${PRODUCT} binary."
+	# Remove the downloaded files to clean up
+	sudo rm -f "${PRODUCT}"_"${VERSION}"_SHA256SUMS "${PRODUCT}"_"${VERSION}"_SHA256SUMS.sig
+
+}
+
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
-  export PRODUCT="vault"
-  export VERSION=$VAULT_VERSION
-  export OS_ARCH="linux_$( dpkg --print-architecture )"
-	export VAULT_INSTALL_URL="https://releases.hashicorp.com/${PRODUCT}/${VERSION}/${PRODUCT}_${VERSION}_${OS_ARCH}.zip"
-  log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
+	#VAULT_INSTALL_URL="https://releases.hashicorp.com/${PRODUCT}/${VAULT_VERSION}/${PRODUCT}_${VAULT_VERSION}_${OS_ARCH}.zip"
+  #sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
+  log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN} unzip and set permissions"
+	sudo unzip "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
+	sudo unzip "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
+	sudo rm -f "${PRODUCT}"_"${VAULT_VERSION}"_"${OS_ARCH}".zip
 
-	log "INFO" "Unzipping Vault Enterprise binary to $VAULT_DIR_BIN"
-  sudo unzip $VAULT_DIR_BIN/vault.zip vault -d $VAULT_DIR_BIN
-  sudo unzip $VAULT_DIR_BIN/vault.zip -x vault -d $VAULT_DIR_LICENSE
+	# Set the permissions for the Vault binary
+	sudo chmod 0755 $VAULT_DIR_BIN/vault
+	sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_BIN/vault
 
-  sudo rm $VAULT_DIR_BIN/vault.zip
+	# Create a symlink to the Vault binary in /usr/local/bin
+	sudo ln -sf $VAULT_DIR_BIN/vault /usr/local/bin/vault
+
+	log "INFO" "Vault binary installed successfully at $VAULT_DIR_BIN/vault"
 }
 
 function install_vault_plugins {
@@ -387,6 +417,9 @@ main() {
 
   log "INFO" "Creating directories for Vault config and data"
   directory_create
+
+	log "INFO" "Verifying checksum function"
+  checksum_verify
 
   log "INFO" "Installing Vault"
   install_vault_binary
