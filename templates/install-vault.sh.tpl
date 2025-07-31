@@ -374,10 +374,11 @@ function prepare_disk() {
   local device_label="$3"
   log "DEBUG" "prepare_disk - device_label; $${device_label}"
 
-  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
   # add sleep in to wait longer for the disk attachment
+
   sleep 20
-  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:Vol    umeId}' --region $REGION --output text | tr -d '-' )
+
+  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
   if [[ -z "$${ebs_volume_id}" ]]; then
     log "ERROR" "No EBS volume found attached to device $${device_name}"
     exit_script 1
