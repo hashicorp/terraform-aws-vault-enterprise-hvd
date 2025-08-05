@@ -121,16 +121,22 @@ function checksum_verify {
   # checksum_verify downloads the $$PRODUCT binary and verifies its integrity
   log "INFO" "Verifying the integrity of the $${PRODUCT} binary."
   export GNUPGHOME=./.gnupg
+  log "INFO" "Importing HashiCorp GPG key."
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 
 	log "INFO" "Downloading Vault Enterprise binary"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
+	log "INFO" "Downloading Vault Enterprise binary checksum files"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+	log "INFO" "Downloading Vault Enterprise binary checksum signature file"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
-  # Verify the signature file is untampered.
+  log "INFO" "Verifying the signature file is untampered."
   gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+	if [[ $? -ne 0 ]]; then
+		log "ERROR" "Gpg verification failed for SHA256SUMS."
+		exit_script 1
+	fi
 
-  # Verify the SHASUM matches the archive.
   shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
 	if [[ $? -ne 0 ]]; then
 		log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
@@ -139,7 +145,7 @@ function checksum_verify {
 
 	log "INFO" "Checksum verification passed for the $${PRODUCT} binary."
 
-	# Remove the downloaded files to clean up
+	log "INFO" "Removing the downloaded files to clean up"
 	sudo rm -f "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
 
 }
