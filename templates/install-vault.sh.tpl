@@ -139,6 +139,7 @@ function directory_create {
 }
 
 function checksum_verify {
+  local os_arch="$1"
   # https://www.hashicorp.com/en/trust/security
   # checksum_verify downloads the $$PRODUCT binary and verifies its integrity
   log "INFO" "Verifying the integrity of the $${PRODUCT} binary."
@@ -174,6 +175,7 @@ function checksum_verify {
 
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
+  local os_arch="$1"
 	#VAULT_INSTALL_URL="https://releases.hashicorp.com/$${PRODUCT}/$${VAULT_VERSION}/$${PRODUCT}_$${VAULT_VERSION}_$${OS_ARCH}.zip"
   #sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
   log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN unzip and set permissions"
@@ -453,10 +455,10 @@ main() {
   directory_create
 
   log "INFO" "Verifying checksum function"
-  checksum_verify
+  checksum_verify $OS_ARCH
 
   log "INFO" "Installing Vault"
-  install_vault_binary
+  install_vault_binary $OS_ARCH
 
   log "INFO" "Installing Vault plugins"
   install_vault_plugins
