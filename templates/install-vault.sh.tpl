@@ -31,6 +31,7 @@ function log {
 }
 
 function detect_architecture {
+  local architecture
   log "INFO" "Detecting system architecture."
 	case $(uname -m) in
     x86_64)  architecture="amd64" ;;
