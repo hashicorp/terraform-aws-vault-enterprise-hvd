@@ -31,15 +31,24 @@ function log {
 }
 
 function detect_architecture {
-  local architecture
+  local ARCHITECTURE=""
   log "INFO" "Detecting system architecture."
 	case $(uname -m) in
-    x86_64)  architecture="amd64" ;;
-    aarch64) architecture="arm64" ;;
-		arm)     architecture="arm" ;;
-		*)       log "ERROR" "Unsupported architecture detected: $(uname -m)"; exit_script 1 ;;
+    x86_64)
+		  ARCHITECTURE="amd64"
+			;;
+    aarch64)
+		  ARCHITECTURE="arm64"
+			;;
+		arm)
+		  ARCHITECTURE="arm"
+			;;
+		*)
+		  log "ERROR" "Unsupported architecture detected: $(uname -m)"
+		  exit_script 1 ;;
   esac
-	echo "$architecture"
+
+	echo "$ARCHITECTURE"
 
 }
 
