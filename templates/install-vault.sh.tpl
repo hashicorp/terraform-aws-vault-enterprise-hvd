@@ -33,7 +33,7 @@ function log {
 function detect_architecture {
   local ARCHITECTURE=""
   local OS_ARCH_DETECTED=$(uname -m)
-  log "INFO" "Detecting system architecture."
+
   case "$OS_ARCH_DETECTED" in
     "x86_64"*)
       ARCHITECTURE="amd64"
