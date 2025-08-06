@@ -36,13 +36,13 @@ function detect_architecture {
 
   case "$OS_ARCH_DETECTED" in
     "x86_64"*)
-      ARCHITECTURE="amd64"
+      ARCHITECTURE="linux_amd64"
       ;;
     "aarch64"*)
-      ARCHITECTURE="arm64"
+      ARCHITECTURE="linux_arm64"
       ;;
 		"arm"*)
-      ARCHITECTURE="arm"
+      ARCHITECTURE="linux_arm"
 			;;
     *)
       log "ERROR" "Unsupported architecture detected: '$OS_ARCH_DETECTED'. "
