@@ -140,6 +140,7 @@ function directory_create {
 
 function checksum_verify {
   local os_arch="$1"
+
   # https://www.hashicorp.com/en/trust/security
   # checksum_verify downloads the $$PRODUCT binary and verifies its integrity
   log "INFO" "Verifying the integrity of the $${PRODUCT} binary."
@@ -147,7 +148,7 @@ function checksum_verify {
   log "INFO" "Importing HashiCorp GPG key."
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 
-	log "INFO" "Downloading Vault Enterprise binary"
+	log "INFO" "Downloading $${PRODUCT} binary"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
 	log "INFO" "Downloading Vault Enterprise binary checksum files"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
@@ -159,8 +160,13 @@ function checksum_verify {
 		log "ERROR" "Gpg verification failed for SHA256SUMS."
 		exit_script 1
 	fi
-
-  shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+  if [ -x "$(sha256sum --version )" ]; then
+		log "INFO" "Using sha256sum to verify the checksum of the $${PRODUCT} binary."
+		sha256sum -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+	else
+		log "INFO" "Using shasum to verify the checksum of the $${PRODUCT} binary."
+		shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+	fi
 	if [[ $? -ne 0 ]]; then
 		log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
 		exit_script 1
