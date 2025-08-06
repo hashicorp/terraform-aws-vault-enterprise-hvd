@@ -160,7 +160,7 @@ function checksum_verify {
 		log "ERROR" "Gpg verification failed for SHA256SUMS."
 		exit_script 1
 	fi
-  if [ -x "$(sha256sum --version )" ]; then
+  if [ -x "$(command -v sha256sum)" ]; then
 		log "INFO" "Using sha256sum to verify the checksum of the $${PRODUCT} binary."
 		sha256sum -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
 	else
