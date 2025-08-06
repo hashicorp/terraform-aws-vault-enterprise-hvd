@@ -49,7 +49,7 @@ function detect_architecture {
 		  exit_script 1
   esac
 
-	echo "$ARCHITECTURE"
+  echo "$ARCHITECTURE"
 
 }
 
