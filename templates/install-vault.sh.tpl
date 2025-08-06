@@ -32,20 +32,21 @@ function log {
 
 function detect_architecture {
   local ARCHITECTURE=""
+  local OS_ARCH_DETECTED=$(uname -m)
   log "INFO" "Detecting system architecture."
-	case $(uname -m) in
-    x86_64)
-		  ARCHITECTURE="amd64"
+  case "$OS_ARCH_DETECTED" in
+    "x86_64"*)
+      ARCHITECTURE="amd64"
+      ;;
+    "aarch64"*)
+      ARCHITECTURE="arm64"
+      ;;
+		"arm"*)
+      ARCHITECTURE="arm"
 			;;
-    aarch64)
-		  ARCHITECTURE="arm64"
-			;;
-		arm)
-		  ARCHITECTURE="arm"
-			;;
-		*)
-		  log "ERROR" "Unsupported architecture detected: $(uname -m)"
-		  exit_script 1 ;;
+    *)
+      log "ERROR" "Unsupported architecture detected: '$OS_ARCH_DETECTED'. "
+		  exit_script 1
   esac
 
 	echo "$ARCHITECTURE"
