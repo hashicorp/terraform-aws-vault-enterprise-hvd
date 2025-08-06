@@ -15,7 +15,6 @@ VAULT_USER="${vault_user_name}"
 VAULT_GROUP="${vault_group_name}"
 # VAULT_INSTALL_URL="$${vault_install_url}"
 PRODUCT="vault"
-OS_ARCH="linux_$( dpkg --print-architecture )"
 VAULT_VERSION="${vault_version}"
 VERSION=$VAULT_VERSION
 REQUIRED_PACKAGES="unzip"
@@ -28,6 +27,18 @@ function log {
   local log_entry="$timestamp [$level] - $message"
 
   echo "$log_entry" | tee -a "$LOGFILE"
+
+}
+
+function detect_architecture {
+  log "INFO" "Detecting system architecture."
+	case $(uname -m) in
+    x86_64)  architecture ="amd64" ;;
+    aarch64) architecture ="arm64" ;;
+		arm)     architecture ="arm" ;;
+		*)       log "ERROR" "Unsupported architecture detected: $(uname -m)"; exit_script 1 ;;
+  esac
+	echo "$architecture"
 
 }
 
@@ -404,6 +415,8 @@ function prepare_disk() {
 
 main() {
   log "INFO" "Beginning custom_data script."
+	OS_ARCH=$(detect_architecture)
+	log "INFO" "Detected system architecture is '$OS_ARCH'."
   OS_DISTRO=$(detect_os_distro)
   log "INFO" "Detected OS distro is '$OS_DISTRO'."
 
