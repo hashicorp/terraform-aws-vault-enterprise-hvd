@@ -438,13 +438,13 @@ variable "vm_key_pair_name" {
   default     = null
 }
 
-variable "custom_install_vault_template" {
+variable "custom_startup_script_template" {
   type        = string
-  description = "Filename of a custom Vault Install script template to use in place of of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
+  description = "Filename of a custom Install script template to use in place of of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
   default     = null
 
   validation {
-    condition     = var.custom_install_vault_template != null ? fileexists("${path.cwd}/templates/${var.custom_install_vault_template}") : true
+    condition     = var.custom_startup_script_template != null ? fileexists("${path.cwd}/templates/${var.custom_startup_script_template}") : true
     error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
   }
 }

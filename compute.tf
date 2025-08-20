@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 locals {
-  vault_install_tpl           = var.custom_install_vault_template != null ? "${path.cwd}/templates/${var.custom_install_vault_template}" : "${path.module}/templates/install-vault.sh.tpl"
+  vault_install_tpl           = var.custom_startup_script_template != null ? "${path.cwd}/templates/${var.custom_startup_script_template}" : "${path.module}/templates/install-vault.sh.tpl"
   user_data_template_rendered = templatefile(local.vault_install_tpl, local.vault_user_data_template_vars)
   vault_user_data_template_vars = {
     # system paths and settings
