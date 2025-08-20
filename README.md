@@ -78,7 +78,9 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_security_group_rule.ingress_vault_api_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ami.al2023](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_ami.ubuntu_jammy_22_04](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_kms_key.vault_unseal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_route53_zone.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
@@ -103,6 +105,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_asg_node_count"></a> [asg\_node\_count](#input\_asg\_node\_count) | The number of nodes to create in the pool. | `number` | `6` | no |
 | <a name="input_create_route53_vault_dns_record"></a> [create\_route53\_vault\_dns\_record](#input\_create\_route53\_vault\_dns\_record) | Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required. | `bool` | `false` | no |
 | <a name="input_custom_install_vault_template"></a> [custom\_install\_vault\_template](#input\_custom\_install\_vault\_template) | Filename of a custom Vault Install script template to use in place of of the built-in user\_data script. The file must exist within a directory named './templates' in your current working directory. | `string` | `null` | no |
+| <a name="input_ec2_os_distro"></a> [ec2\_os\_distro](#input\_ec2\_os\_distro) | Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`. | `string` | `"ubuntu"` | no |
 | <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_health_check_deregistration_delay"></a> [health\_check\_deregistration\_delay](#input\_health\_check\_deregistration\_delay) | Amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused. The range is 0-3600 seconds. | `number` | `15` | no |
 | <a name="input_health_check_interval"></a> [health\_check\_interval](#input\_health\_check\_interval) | Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. | `number` | `5` | no |
@@ -143,7 +146,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_vault_user_name"></a> [vault\_user\_name](#input\_vault\_user\_name) | Name of system user to own Vault files and processes | `string` | `"vault"` | no |
 | <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | The version of Vault to use | `string` | `"1.17.3+ent"` | no |
 | <a name="input_vm_boot_disk_configuration"></a> [vm\_boot\_disk\_configuration](#input\_vm\_boot\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 30,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
-| <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | The AMI of the image to use | `string` | `null` | no |
+| <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro. | `string` | `null` | no |
 | <a name="input_vm_instance_type"></a> [vm\_instance\_type](#input\_vm\_instance\_type) | The machine type to use for the Vault nodes | `string` | `"m7i.large"` | no |
 | <a name="input_vm_key_pair_name"></a> [vm\_key\_pair\_name](#input\_vm\_key\_pair\_name) | The machine SSH key pair name to use for the cluster nodes | `string` | `null` | no |
 | <a name="input_vm_vault_audit_disk_configuration"></a> [vm\_vault\_audit\_disk\_configuration](#input\_vm\_vault\_audit\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 50,<br/>  "volume_type": "gp3"<br/>}</pre> | no |

@@ -46,8 +46,9 @@ locals {
 }
 
 resource "aws_launch_template" "main" {
-  name          = format("%s-lt", var.friendly_name_prefix)
-  image_id      = local.launch_template_image_id
+  name = format("%s-lt", var.friendly_name_prefix)
+  # image_id      = local.launch_template_image_id
+  image_id      = data.aws_ami.selected.id
   instance_type = var.vm_instance_type
   key_name      = var.vm_key_pair_name
 

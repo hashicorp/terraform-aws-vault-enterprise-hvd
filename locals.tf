@@ -7,5 +7,5 @@ locals {
     kms_key_id = var.vault_seal_awskms_key_arn
   }
 
-  launch_template_image_id = var.vm_image_id == null ? data.aws_ami.ubuntu_jammy_22_04.id : var.vm_image_id
+  # launch_template_image_id = var.vm_image_id == null ? data.aws_ami.ubuntu_jammy_22_04.id : var.vm_image_id
 }

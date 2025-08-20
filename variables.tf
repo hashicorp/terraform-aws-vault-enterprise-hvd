@@ -342,10 +342,36 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
+# variable "vm_image_id" {
+#   type        = string
+#   description = "The AMI of the image to use"
+#   default     = null
+# }
 variable "vm_image_id" {
   type        = string
-  description = "The AMI of the image to use"
+  description = "Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro."
   default     = null
+
+  validation {
+    condition     = try((length(var.vm_image_id) > 4 && substr(var.vm_image_id, 0, 4) == "ami-"), var.vm_image_id == null)
+    error_message = "Value must start with \"ami-\"."
+  }
+
+  validation {
+    condition     = var.ec2_os_distro == "centos" ? var.vm_image_id != null : true
+    error_message = "Value must be set to a CentOS AMI ID when `ec2_os_distro` is `centos`."
+  }
+}
+variable "ec2_os_distro" {
+  type        = string
+  description = "Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`."
+  default     = "ubuntu"
+
+  validation {
+    condition     = contains(["ubuntu", "rhel", "al2023", "centos"], var.ec2_os_distro)
+    error_message = "Valid values are `ubuntu`, `rhel`, `al2023`, or `centos`."
+  }
+
 }
 
 variable "vm_boot_disk_configuration" {
