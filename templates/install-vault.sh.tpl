@@ -99,7 +99,7 @@ function install_packages() {
     apt-get install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
   elif [[ "$OS_DISTRO" == "centos" || "$OS_DISTRO" == "rhel" ]]; then
     yum install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
-	elif [[  "$OS_DISTRO" == "amzn2023" ]]; then
+  elif [[  "$OS_DISTRO" == "amzn2023" ]]; then
     yum install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
     log "INFO" "Enabling gnupg2-full for Amazon Linux 2023."
     dnf swap gnupg2-minimal gnupg2-full -y
