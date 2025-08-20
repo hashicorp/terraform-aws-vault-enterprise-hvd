@@ -15,7 +15,7 @@ data "aws_kms_key" "vault_unseal" {
 # EC2 AMI data sources
 #------------------------------------------------------------------------------
 data "aws_ami" "ubuntu" {
-  count = var.ec2_os_distro == "ubuntu" && var.ec2_ami_id == null ? 1 : 0
+  count = var.ec2_os_distro == "ubuntu" && var.vm_image_id == null ? 1 : 0
 
   owners      = ["099720109477", "513442679011"]
   most_recent = true
@@ -42,7 +42,7 @@ data "aws_ami" "ubuntu" {
 }
 
 data "aws_ami" "rhel" {
-  count = var.ec2_os_distro == "rhel" && var.ec2_ami_id == null ? 1 : 0
+  count = var.ec2_os_distro == "rhel" && var.vm_image_id == null ? 1 : 0
 
   owners      = ["309956199498"]
   most_recent = true
@@ -69,7 +69,7 @@ data "aws_ami" "rhel" {
 }
 
 data "aws_ami" "al2023" {
-  count = var.ec2_os_distro == "al2023" && var.ec2_ami_id == null ? 1 : 0
+  count = var.ec2_os_distro == "al2023" && var.vm_image_id == null ? 1 : 0
 
   owners      = ["amazon"]
   most_recent = true
@@ -102,7 +102,7 @@ locals {
   // If an AMI ID is provided via `var.ec2_ami_id`, use it. Otherwise,
   // use the latest AMI for the specified OS distro via `var.ec2_os_distro`.
   ami_id_list = tolist([
-    var.ec2_ami_id,
+    var.vm_image_id,
     join("", data.aws_ami.ubuntu.*.image_id),
     join("", data.aws_ami.rhel.*.image_id),
     join("", data.aws_ami.al2023.*.image_id),
