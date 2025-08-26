@@ -47,6 +47,7 @@ function detect_architecture {
     *)
       log "ERROR" "Unsupported architecture detected: '$OS_ARCH_DETECTED'. "
 		  exit_script 1
+			;;
   esac
 
   echo "$ARCHITECTURE"
@@ -394,7 +395,7 @@ complete -C $VAULT_DIR_BIN/vault vault
 EOF
 }
 
-exit_script() {
+function exit_script() {
   if [[ "$1" == 0 ]]; then
     log "INFO" "Vault custom_data script finished successfully!"
   else
