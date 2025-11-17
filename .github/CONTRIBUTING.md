@@ -8,14 +8,14 @@ to make via issue, email, or any other method with the owners of this repository
 Do note that this project has a code of conduct; please be sure to follow it
 in all of your project interactions.
 
-## Pull Request Process
+## Pull request process
 
 1. Ensure any install or build artifacts are removed before the end of
    the layer when doing a build
-2. Update the README.md, any relevant `./docs/`entry or `./examples` with details of changes to the
+1. Update the README.md, any relevant `./docs/`entry or `./examples` with details of changes to the
    interface, this includes running `terraform-docs` to update the `README.md`
-3. Releases use versioning tags. The versioning scheme we use is (mostly) [SemVer](http://semver.org/)
-4. You may merge the Pull Request in once you have the sign-off of two other
+1. Releases use versioning tags. The versioning scheme we use is (mostly) [SemVer](http://semver.org/)
+1. You may merge the pull request in once you have the sign-off of two other
    project contributors, or if you do not have permission to do that, you can
    request the second reviewer to merge it for you and release.
 
