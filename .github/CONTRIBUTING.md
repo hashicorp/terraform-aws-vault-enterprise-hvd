@@ -84,7 +84,7 @@ Requirements:
 - `MOD_RELEASE` variable must be set to a valid semver tag (e.g., `1.2.3`), it can be set as an env var `export MOD_RELEASE`, in `env.local`, or passsed at the command line `MOD_RELEASE=x.x.x. task release`
 - The new version must be greater than the current tag
 
-The release process will:
+The release process will do the following.
 1. Create a release branch
 1. Update documentation URLs
 1. Create a tagged release
