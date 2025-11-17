@@ -1,4 +1,4 @@
-# Markdown URL Converter
+# Markdown URL converter
 
 A Python script that converts relative URLs in Markdown files to absolute URLs. This is particularly useful for documentation that needs to reference files from a specific base URL, such as GitHub repository documentation or hosted documentation sites.
 
