@@ -69,9 +69,6 @@ task terraform-docs
 
 Note: This requires a `.terraform-docs.yml` configuration file. If you do not have one, you can generate it with `task generate-terraform-docs-config`.
 
-```bash
-task generate-terraform-docs-config
-```
 
 ## Creating a Release
 
