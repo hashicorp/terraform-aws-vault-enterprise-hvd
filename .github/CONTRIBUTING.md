@@ -89,11 +89,11 @@ Requirements:
 
 The release process will:
 1. Create a release branch
-2. Update documentation URLs
-3. Create a tagged release
-4. Generate release notes
-5. Create a GitHub release
-6. Clean up the temporary release branch
+1. Update documentation URLs
+1. Create a tagged release
+1. Generate release notes
+1. Create a GitHub release
+1. Clean up the temporary release branch
 
 ```
 MOD_RELEASE=0.1.2 task release -n
