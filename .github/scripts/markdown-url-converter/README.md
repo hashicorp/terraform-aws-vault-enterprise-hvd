@@ -15,8 +15,8 @@ A Python script that converts relative URLs in markdown files to absolute URLs. 
 ## Installation
 
 1. Ensure you have Python 3.6 or later installed
-2. Download the `convert_markdown_urls.py` script
-3. Make it executable (Unix-like systems):
+1. Download the `convert_markdown_urls.py` script
+1. Make it executable (Unix-like systems):
 
    ```bash
    chmod +x convert_markdown_urls.py
