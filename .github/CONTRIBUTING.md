@@ -118,9 +118,9 @@ task: [release] git push origin --delete rel-${MOD_RELEASE}
 > You can also set the `MOD_RELEASE` variable in a `.env.local` file for convenience.
 
 
-## Code of Conduct
+## Code of conduct
 
-### Our Pledge
+### Our pledge
 
 In the interest of fostering an open and welcoming environment, we as
 contributors and maintainers pledge to making participation in our project
@@ -129,27 +129,27 @@ body size, disability, ethnicity, gender identity and expression, level of
 experience, nationality, personal appearance, race, religion, or sexual
 identity and orientation.
 
-### Our Standards
+### Our standards
 
 Examples of behavior that contributes to creating a positive environment
 include:
 
-* Showing empathy towards other community members
-* Using welcoming and inclusive language
-* Being respectful of differing viewpoints and experiences
-* Gracefully accepting constructive criticism
-* Focusing on what is best for the community
+- Showing empathy towards other community members.
+- Using welcoming and inclusive language.
+- Being respectful of differing viewpoints and experiences.
+- Gracefully accepting constructive criticism.
+- Focusing on what is best for the community.
 
-Examples of unacceptable behavior by participants include:
+Examples of unacceptable behavior by participants include the following.
 
-* Use of sexualized language or imagery and unwelcome sexual attention
-  or advances
-* Insulting/derogatory comments, and personal or political attacks
-* Public or private harassment
-* Publishing others' private information, such as a physical or electronic
-  address, without explicit permission
-* Other conduct which could reasonably be considered inappropriate in a
-  professional setting
+- Use of sexualized language or imagery and unwelcome sexual attention
+  or advances.
+- Insulting/derogatory comments, and personal or political attacks.
+- Public or private harassment.
+- Publishing others' private information, such as a physical or electronic
+  address, without explicit permission.
+- Other conduct which could reasonably be considered inappropriate in a
+  professional setting.
 
 ### Our Responsibilities
 
