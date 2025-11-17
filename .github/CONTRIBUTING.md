@@ -23,10 +23,9 @@ in all of your project interactions.
 
 There is a basic issue template to post issues.
 
-## Pull-request
+## Pull request
 
-The repo includes a pull-request template with basic requirments for testing and validation which we provide config for basic smoke test such as `terarform fmt, validate` and `terraform-docs`
-
+The repository includes a pull request template with basic requirements for testing and validation which we provide config for basic smoke test such as `terraform fmt`, `terraform validate` and `terraform-docs`
 
 ## Tooling
 
