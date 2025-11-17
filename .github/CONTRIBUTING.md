@@ -39,15 +39,14 @@ The `release` task requires the following.
 - This also relies on the GitHub cli `GH`, <https://cli.github.com/>, do not forget to authenticate `gh`
 - The `markdown-url-converter.py` requires `python` in your `$PATH`.
 
-## Available Tasks
+## Available tasks
 
-You can list all available tasks by running:
+You can list all available tasks by running the following.
 
 ```bash
 task
 task default
 task --list-all
-```
 
 ## Testing
 
