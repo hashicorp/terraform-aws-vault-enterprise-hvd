@@ -61,7 +61,7 @@ This includes `task clean-terraform` which removes Terraform directories and loc
 
 ## Documentation
 
-To update Terraform documentation:
+To update Terraform documentation, run the following.
 
 ```bash
 task terraform-docs
