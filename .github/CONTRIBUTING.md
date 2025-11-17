@@ -33,7 +33,7 @@ This repository uses [Task](https://taskfile.dev/) to manage development tasks.
 
 ### Requirements
 
-The `release` task requires;
+The `release` task requires the following.
 
 - Make sure you have Task installed before proceeding, <https://taskfile.dev/docs/installation>.
 - This also relies on the GitHub cli `GH`, <https://cli.github.com/>, do not forget to authenticate `gh`
