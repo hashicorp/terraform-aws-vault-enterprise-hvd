@@ -50,14 +50,9 @@ task --list-all
 
 ## Testing
 
-To run all tests:
-
-```bash
-task test
-```
-
+To run all tests, run `task test`.
 This will run Terraform tests:
-- `task test-terraform`: Runs formatting checks, initialization, and validation for all Terraform directories
+- `task test-terraform`: Runs formatting checks, initialization, and validation for all Terraform directories.
 
 ## Cleaning
 
