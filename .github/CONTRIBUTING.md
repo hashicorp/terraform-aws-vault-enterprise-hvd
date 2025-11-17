@@ -56,14 +56,8 @@ This will run Terraform tests:
 
 ## Cleaning
 
-To clean the environment:
-
-```bash
-task clean
-```
-
-This includes:
-- `task clean-terraform`: Removes Terraform directories and lock files
+To clean the environment, run `task clean`.
+This includes `task clean-terraform` which removes Terraform directories and lock files.
 
 ## Documentation
 
