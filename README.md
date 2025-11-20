@@ -24,7 +24,7 @@ This module requires the following to already be in place in AWS:
 
 Upon first deployment, Vault servers will auto-join and form a fresh cluster. The cluster will be in an uninitialized, sealed state. An operator must then connect to the cluster to initialize Vault. If auto-unseal is used via AWS KMS, the Vault nodes will automatically unseal upon initialization. If the Shamir seal is used, the operator must manually unseal each node.
 
-## Deployment Options
+## Deployment options
 
 see [Deployment customizations](./docs/vault-deployment-customizations.md)
 
