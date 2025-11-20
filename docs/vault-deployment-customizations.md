@@ -1,4 +1,4 @@
-# Deployment Customizations
+# Deployment customizations
 
 On this page are various deployment customizations and their corresponding input variables that you may set to meet your requirements.
 
