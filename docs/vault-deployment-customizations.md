@@ -21,8 +21,6 @@ vm_image_id    = "<custom-rhel-ami-id>"
 ec2_os_distro = "<rhel>"
 ```
 
-
-
 ## Deployment troubleshooting
 
 In the `compute.tf` there is a commented out local file resource that will render the Boundary custom data script to a local file where this module is being run. This can be useful for reviewing the custom data script as it will be rendered on the deployed VM. This fill will contain sensitive vaults so do not commit this and delete this file when done troubleshooting.
