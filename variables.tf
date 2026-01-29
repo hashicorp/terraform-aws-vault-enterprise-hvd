@@ -393,7 +393,7 @@ variable "vm_key_pair_name" {
 
 variable "ec2_allow_ssm" {
   type        = bool
-  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the TFE instance role, allowing the SSM agent (if present) to function."
+  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."
   default     = false
 }
 
