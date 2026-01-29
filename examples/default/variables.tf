@@ -342,11 +342,6 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
-# variable "vm_image_id" {
-#   type        = string
-#   description = "The AMI of the image to use"
-#   default     = null
-# }
 variable "vm_image_id" {
   type        = string
   description = "Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro."
