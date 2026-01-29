@@ -440,7 +440,7 @@ variable "vm_key_pair_name" {
 
 variable "custom_startup_script_template" {
   type        = string
-  description = "Filename of a custom Install script template to use in place of of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
+  description = "Filename of a custom Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
   default     = null
 
   validation {
