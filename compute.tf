@@ -22,8 +22,8 @@ locals {
     sm_vault_tls_ca_bundle    = var.sm_vault_tls_ca_bundle == null ? "NONE" : var.sm_vault_tls_ca_bundle
 
     # Vault settings
-    vault_fqdn    = var.vault_fqdn,
-    vault_version = var.vault_version,
+    vault_fqdn                               = var.vault_fqdn,
+    vault_version                            = var.vault_version,
     vault_disable_mlock                      = var.vault_disable_mlock,
     vault_enable_ui                          = var.vault_enable_ui,
     vault_default_lease_ttl_duration         = var.vault_default_lease_ttl_duration,
@@ -45,8 +45,7 @@ locals {
 }
 
 resource "aws_launch_template" "main" {
-  name = format("%s-lt", var.friendly_name_prefix)
-  # image_id      = local.launch_template_image_id
+  name          = format("%s-lt", var.friendly_name_prefix)
   image_id      = data.aws_ami.selected.id
   instance_type = var.vm_instance_type
   key_name      = var.vm_key_pair_name
