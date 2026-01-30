@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 data "aws_region" "current" {}
+data "aws_partition" "current" {}
 
 data "aws_vpc" "main" {
   id = var.net_vpc_id

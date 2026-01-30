@@ -30,3 +30,9 @@ resource "aws_iam_role_policy" "main" {
     vault_snapshots_bucket_arn = var.vault_snapshots_bucket_arn == null ? "" : var.vault_snapshots_bucket_arn,
   })
 }
+resource "aws_iam_role_policy_attachment" "aws_ssm" {
+  count = var.ec2_allow_ssm ? 1 : 0
+
+  role       = aws_iam_role.vault_iam_role.name
+  policy_arn = provider::aws::arn_build(data.aws_partition.current.partition, "iam", "", "aws", "policy/AmazonSSMManagedInstanceCore")
+}
