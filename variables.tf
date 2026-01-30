@@ -443,6 +443,7 @@ variable "custom_startup_script_template" {
     condition     = var.custom_startup_script_template != null ? fileexists("${path.cwd}/templates/${var.custom_startup_script_template}") : true
     error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
   }
+}
 variable "ec2_allow_ssm" {
   type        = bool
   description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."

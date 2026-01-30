@@ -342,6 +342,7 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
+
 variable "vm_image_id" {
   type        = string
   description = "Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro."
@@ -435,16 +436,17 @@ variable "vm_key_pair_name" {
 
 variable "custom_startup_script_template" {
   type        = string
-  description = "Filename of a custom Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
+  description = "Filename of a custom Vault Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
   default     = null
 
   validation {
     condition     = var.custom_startup_script_template != null ? fileexists("${path.cwd}/templates/${var.custom_startup_script_template}") : true
     error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
   }
+}
 variable "ec2_allow_ssm" {
   type        = bool
-  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role, allowing the SSM agent (if present) to function."
+  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."
   default     = false
 }
 
