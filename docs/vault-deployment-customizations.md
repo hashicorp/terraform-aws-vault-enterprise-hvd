@@ -4,7 +4,7 @@ On this page are various deployment customizations and their corresponding input
 
 ## DNS
 
-This module supports creating an _alias_ record in AWS Route53 for the Boundary FQDN to resolve to the Boundary API load balancer DNS name. To do so, the following module input variables may be set:
+This module supports creating an _alias_ record in AWS Route53 for the Vault FQDN to resolve to the Vault API load balancer DNS name. To do so, the following module input variables may be set:
 
 ```hcl
 create_route53_vault_dns_record      = <true>
@@ -23,7 +23,7 @@ ec2_os_distro = "<rhel>"
 
 ## Deployment troubleshooting
 
-In the `compute.tf` there is a commented out local file resource that will render the Boundary custom data script to a local file where this module is being run. This can be useful for reviewing the custom data script as it will be rendered on the deployed VM. This fill will contain sensitive vaults so do not commit this and delete this file when done troubleshooting.
+In the `compute.tf` there is a commented out local file resource that will render the Vault custom data script to a local file where this module is being run. This can be useful for reviewing the custom data script as it will be rendered on the deployed VM. This fill will contain sensitive vaults so do not commit this and delete this file when done troubleshooting.
 
 ## Custom startup script
 

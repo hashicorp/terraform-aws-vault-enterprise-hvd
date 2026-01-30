@@ -2,14 +2,15 @@
 # SPDX-License-Identifier: MPL-2.0
 
 data "aws_route53_zone" "vault" {
-  count = var.create_route53_vault_dns_record && var.route53_vault_hosted_zone_name != null ? 1 : 0
+  count = var.load_balancing_scheme != "NULL" && var.route53_vault_hosted_zone_name != null ? 1 : 0
 
   name         = var.route53_vault_hosted_zone_name
   private_zone = var.route53_vault_hosted_zone_is_private
 }
 
 resource "aws_route53_record" "alias_record" {
-  count = var.route53_vault_hosted_zone_name != null && var.create_route53_vault_dns_record ? 1 : 0
+  # count = var.create_route53_vault_dns_record && var.route53_vault_hosted_zone_name != null ? 1 : 0
+  count = var.load_balancing_scheme != "NONE" && var.create_route53_vault_dns_record != null ? 1 : 0
 
   name    = var.vault_fqdn
   zone_id = data.aws_route53_zone.vault[0].zone_id

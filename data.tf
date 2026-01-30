@@ -99,7 +99,7 @@ data "aws_ami" "al2023" {
 # Launch template
 #------------------------------------------------------------------------------
 locals {
-  // If an AMI ID is provided via `var.ec2_ami_id`, use it. Otherwise,
+  // If an AMI ID is provided via `var.vm_image_id`, use it. Otherwise,
   // use the latest AMI for the specified OS distro via `var.ec2_os_distro`.
   ami_id_list = tolist([
     var.vm_image_id,

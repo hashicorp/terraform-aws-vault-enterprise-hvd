@@ -153,53 +153,51 @@ function checksum_verify {
   log "INFO" "Importing HashiCorp GPG key."
   sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
 
-	log "INFO" "Downloading $${PRODUCT} binary"
+  log "INFO" "Downloading $${PRODUCT} binary"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
-	log "INFO" "Downloading Vault Enterprise binary checksum files"
+  log "INFO" "Downloading Vault Enterprise binary checksum files"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
-	log "INFO" "Downloading Vault Enterprise binary checksum signature file"
+  log "INFO" "Downloading Vault Enterprise binary checksum signature file"
   sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
   log "INFO" "Verifying the signature file is untampered."
   gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
-	if [[ $? -ne 0 ]]; then
-		log "ERROR" "Gpg verification failed for SHA256SUMS."
-		exit_script 1
-	fi
+  if [[ $? -ne 0 ]]; then
+    log "ERROR" "Gpg verification failed for SHA256SUMS."
+    exit_script 1
+  fi
   if [ -x "$(command -v sha256sum)" ]; then
-		log "INFO" "Using sha256sum to verify the checksum of the $${PRODUCT} binary."
-		sha256sum -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
-	else
-		log "INFO" "Using shasum to verify the checksum of the $${PRODUCT} binary."
-		shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+    log "INFO" "Using sha256sum to verify the checksum of the $${PRODUCT} binary."
+    sha256sum -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+  else
+    log "INFO" "Using shasum to verify the checksum of the $${PRODUCT} binary."
+    shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
 	fi
-	if [[ $? -ne 0 ]]; then
-		log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
-		exit_script 1
-	fi
+  if [[ $? -ne 0 ]]; then
+    log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
+    exit_script 1
+  fi
+  log "INFO" "Checksum verification passed for the $${PRODUCT} binary."
 
-	log "INFO" "Checksum verification passed for the $${PRODUCT} binary."
-
-	log "INFO" "Removing the downloaded files to clean up"
-	sudo rm -f "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
-
+  log "INFO" "Removing the downloaded files to clean up"
+  sudo rm -f "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
 }
 
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
   local os_arch="$1"
   log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN unzip and set permissions"
-	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
-	sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
-	sudo rm -f "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
+  sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
+  sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
+  sudo rm -f "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
 
 	# Set the permissions for the Vault binary
-	sudo chmod 0755 $VAULT_DIR_BIN/vault
-	sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_BIN/vault
+  sudo chmod 0755 $VAULT_DIR_BIN/vault
+  sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_BIN/vault
 
 	# Create a symlink to the Vault binary in /usr/local/bin
-	sudo ln -sf $VAULT_DIR_BIN/vault /usr/local/bin/vault
+  sudo ln -sf $VAULT_DIR_BIN/vault /usr/local/bin/vault
 
-	log "INFO" "Vault binary installed successfully at $VAULT_DIR_BIN/vault"
+  log "INFO" "Vault binary installed successfully at $VAULT_DIR_BIN/vault"
 }
 
 function install_vault_plugins {
