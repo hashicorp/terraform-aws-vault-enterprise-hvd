@@ -24,9 +24,21 @@ This module requires the following to already be in place in AWS:
 
 Upon first deployment, Vault servers will auto-join and form a fresh cluster. The cluster will be in an uninitialized, sealed state. An operator must then connect to the cluster to initialize Vault. If auto-unseal is used via AWS KMS, the Vault nodes will automatically unseal upon initialization. If the Shamir seal is used, the operator must manually unseal each node.
 
+## Deployment options
+
+see [Deployment customizations](./docs/vault-deployment-customizations.md)
+
 ## Examples
 
 Example deployment scenarios can be found in the [`examples`](./examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
+
+## Troubleshooting
+
+During deployment the output of the `user_data` script can be traced in `/var/log/cloud-init.log`, `/var/log/cloud-init-output.log` and `/var/log/vault-cloud-init.log` due to `set -xeuo pipefail` in the default  `install-vault.sh.tpl`
+For help debugging cloud init and user data scripts
+- <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html#userdata-linux>
+- <https://cloudinit.readthedocs.io/en/latest/howto/debugging.html#cloud-init-ran-but-didn-t-do-what-i-want-it-to>
+
 
 ## Module support
 
@@ -38,13 +50,17 @@ This open source software is maintained by the HashiCorp Technical Field Organiz
 Please note that there is no official Service Level Agreement (SLA) for support of this software as a HashiCorp customer. This software falls under the definition of Community Software/Versions in your Agreement. We appreciate your understanding and collaboration in improving our open source projects.
 
 <!-- BEGIN_TF_DOCS -->
+## Requirements
 
+| Name | Version |
+|------|---------|
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | n/a |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.0 |
 
 ## Resources
 
@@ -60,16 +76,20 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_lb_listener.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_target_group.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_placement_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/placement_group) | resource |
+| [aws_route53_record.alias_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_security_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.egress_all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_ssh_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_api_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ami.al2023](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
-| [aws_ami.ubuntu_jammy_22_04](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_kms_key.vault_unseal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
+| [aws_route53_zone.vault](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
 | [aws_vpc.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
 
 ## Inputs
@@ -89,6 +109,9 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_asg_health_check_grace_period"></a> [asg\_health\_check\_grace\_period](#input\_asg\_health\_check\_grace\_period) | The amount of time to expire before the autoscaling group terminates an unhealthy node is terminated | `string` | `600` | no |
 | <a name="input_asg_health_check_type"></a> [asg\_health\_check\_type](#input\_asg\_health\_check\_type) | Defines how autoscaling health checking is done | `string` | `"EC2"` | no |
 | <a name="input_asg_node_count"></a> [asg\_node\_count](#input\_asg\_node\_count) | The number of nodes to create in the pool. | `number` | `6` | no |
+| <a name="input_create_route53_vault_dns_record"></a> [create\_route53\_vault\_dns\_record](#input\_create\_route53\_vault\_dns\_record) | Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required. | `bool` | `false` | no |
+| <a name="input_custom_startup_script_template"></a> [custom\_startup\_script\_template](#input\_custom\_startup\_script\_template) | Filename of a custom Vault Install script template to use in place of the built-in user\_data script. The file must exist within a directory named './templates' in your current working directory. | `string` | `null` | no |
+| <a name="input_ec2_os_distro"></a> [ec2\_os\_distro](#input\_ec2\_os\_distro) | Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`. | `string` | `"ubuntu"` | no |
 | <a name="input_ec2_allow_ssm"></a> [ec2\_allow\_ssm](#input\_ec2\_allow\_ssm) | Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance IAM role, allowing the SSM agent (if present) to function. | `bool` | `false` | no |
 | <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_health_check_deregistration_delay"></a> [health\_check\_deregistration\_delay](#input\_health\_check\_deregistration\_delay) | Amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused. The range is 0-3600 seconds. | `number` | `15` | no |
@@ -102,6 +125,8 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_net_ingress_vault_cidr_blocks"></a> [net\_ingress\_vault\_cidr\_blocks](#input\_net\_ingress\_vault\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_vault_security_group_ids"></a> [net\_ingress\_vault\_security\_group\_ids](#input\_net\_ingress\_vault\_security\_group\_ids) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | A map containing tags to assign to all resources | `map(string)` | `{}` | no |
+| <a name="input_route53_vault_hosted_zone_is_private"></a> [route53\_vault\_hosted\_zone\_is\_private](#input\_route53\_vault\_hosted\_zone\_is\_private) | Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone. | `bool` | `false` | no |
+| <a name="input_route53_vault_hosted_zone_name"></a> [route53\_vault\_hosted\_zone\_name](#input\_route53\_vault\_hosted\_zone\_name) | Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`. | `string` | `null` | no |
 | <a name="input_stickiness_enabled"></a> [stickiness\_enabled](#input\_stickiness\_enabled) | Enable sticky sessions by client IP address for the load balancer. | `bool` | `true` | no |
 | <a name="input_systemd_dir"></a> [systemd\_dir](#input\_systemd\_dir) | Path to systemd directory for unit files | `string` | `"/lib/systemd/system"` | no |
 | <a name="input_vault_default_lease_ttl_duration"></a> [vault\_default\_lease\_ttl\_duration](#input\_vault\_default\_lease\_ttl\_duration) | The default lease TTL expressed as a time duration in hours, minutes and/or seconds (e.g. `4h30m10s`) | `string` | `"1h"` | no |
@@ -128,7 +153,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_vault_user_name"></a> [vault\_user\_name](#input\_vault\_user\_name) | Name of system user to own Vault files and processes | `string` | `"vault"` | no |
 | <a name="input_vault_version"></a> [vault\_version](#input\_vault\_version) | The version of Vault to use | `string` | `"1.17.3+ent"` | no |
 | <a name="input_vm_boot_disk_configuration"></a> [vm\_boot\_disk\_configuration](#input\_vm\_boot\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 30,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
-| <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | The AMI of the image to use | `string` | `null` | no |
+| <a name="input_vm_image_id"></a> [vm\_image\_id](#input\_vm\_image\_id) | Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro. | `string` | `null` | no |
 | <a name="input_vm_instance_type"></a> [vm\_instance\_type](#input\_vm\_instance\_type) | The machine type to use for the Vault nodes | `string` | `"m7i.large"` | no |
 | <a name="input_vm_key_pair_name"></a> [vm\_key\_pair\_name](#input\_vm\_key\_pair\_name) | The machine SSH key pair name to use for the cluster nodes | `string` | `null` | no |
 | <a name="input_vm_vault_audit_disk_configuration"></a> [vm\_vault\_audit\_disk\_configuration](#input\_vm\_vault\_audit\_disk\_configuration) | The disk (EBS) configuration to use for the Vault nodes | <pre>object(<br/>    {<br/>      volume_type           = string<br/>      volume_size           = number<br/>      delete_on_termination = bool<br/>      encrypted             = bool<br/>    }<br/>  )</pre> | <pre>{<br/>  "delete_on_termination": true,<br/>  "encrypted": true,<br/>  "volume_size": 50,<br/>  "volume_type": "gp3"<br/>}</pre> | no |

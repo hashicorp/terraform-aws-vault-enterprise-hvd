@@ -12,9 +12,14 @@ data "aws_kms_key" "vault_unseal" {
   key_id = var.vault_seal_awskms_key_arn
 }
 
-data "aws_ami" "ubuntu_jammy_22_04" {
+#------------------------------------------------------------------------------
+# EC2 AMI data sources
+#------------------------------------------------------------------------------
+data "aws_ami" "ubuntu" {
+  count = var.ec2_os_distro == "ubuntu" && var.vm_image_id == null ? 1 : 0
+
+  owners      = ["099720109477", "513442679011"]
   most_recent = true
-  owners      = ["099720109477"] # Canonical
 
   filter {
     name   = "name"
@@ -22,17 +27,93 @@ data "aws_ami" "ubuntu_jammy_22_04" {
   }
 
   filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
     name   = "virtualization-type"
     values = ["hvm"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+}
+
+data "aws_ami" "rhel" {
+  count = var.ec2_os_distro == "rhel" && var.vm_image_id == null ? 1 : 0
+
+  owners      = ["309956199498"]
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = ["RHEL-9.*_HVM-*-x86_64-*-Hourly2-GP3"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
   }
 }
 
 data "aws_ami" "al2023" {
-  most_recent = true
+  count = var.ec2_os_distro == "al2023" && var.vm_image_id == null ? 1 : 0
+
   owners      = ["amazon"]
+  most_recent = true
 
   filter {
     name   = "name"
-    values = ["al2023-ami-*-x86_64"]
+    values = ["al2023-ami-2023.*-x86_64"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+}
+
+#------------------------------------------------------------------------------
+# Launch template
+#------------------------------------------------------------------------------
+locals {
+  // If an AMI ID is provided via `var.vm_image_id`, use it. Otherwise,
+  // use the latest AMI for the specified OS distro via `var.ec2_os_distro`.
+  ami_id_list = tolist([
+    var.vm_image_id,
+    join("", data.aws_ami.ubuntu.*.image_id),
+    join("", data.aws_ami.rhel.*.image_id),
+    join("", data.aws_ami.al2023.*.image_id),
+  ])
+}
+
+// Query the specific AMI being used to obtain the selected AMI's ID.
+data "aws_ami" "selected" {
+  filter {
+    name   = "image-id"
+    values = [coalesce(local.ami_id_list...)]
   }
 }

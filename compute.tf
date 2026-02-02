@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: MPL-2.0
 
 locals {
+  vault_install_tpl           = var.custom_startup_script_template != null ? "${path.cwd}/templates/${var.custom_startup_script_template}" : "${path.module}/templates/install-vault.sh.tpl"
+  user_data_template_rendered = templatefile(local.vault_install_tpl, local.vault_user_data_template_vars)
   vault_user_data_template_vars = {
     # system paths and settings
     systemd_dir              = var.systemd_dir,
@@ -21,7 +23,7 @@ locals {
 
     # Vault settings
     vault_fqdn                               = var.vault_fqdn,
-    vault_install_url                        = format("https://releases.hashicorp.com/vault/%s/vault_%s_linux_amd64.zip", var.vault_version, var.vault_version),
+    vault_version                            = var.vault_version,
     vault_disable_mlock                      = var.vault_disable_mlock,
     vault_enable_ui                          = var.vault_enable_ui,
     vault_default_lease_ttl_duration         = var.vault_default_lease_ttl_duration,
@@ -38,24 +40,19 @@ locals {
     vault_plugin_urls   = var.vault_plugin_urls
     auto_join_tag_key   = var.vault_raft_auto_join_tag == null ? "aws:autoscaling:groupName" : keys(var.vault_raft_auto_join_tag)[0],
     auto_join_tag_value = var.vault_raft_auto_join_tag == null ? format("%s-asg", var.friendly_name_prefix) : values(var.vault_raft_auto_join_tag)[0],
+
   }
 }
 
 resource "aws_launch_template" "main" {
   name          = format("%s-lt", var.friendly_name_prefix)
-  image_id      = local.launch_template_image_id
+  image_id      = data.aws_ami.selected.id
   instance_type = var.vm_instance_type
   key_name      = var.vm_key_pair_name
 
   update_default_version = true
   tags                   = var.resource_tags
-
-  user_data = base64encode(
-    templatefile(
-      "${path.module}/templates/install-vault.sh.tpl",
-      local.vault_user_data_template_vars
-    )
-  )
+  user_data              = base64gzip(local.user_data_template_rendered)
 
   # root
   block_device_mappings {

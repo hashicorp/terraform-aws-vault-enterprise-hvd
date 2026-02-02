@@ -3,6 +3,7 @@ set -xeuo pipefail
 
 LOGFILE="/var/log/vault-cloud-init.log"
 SYSTEMD_DIR="${systemd_dir}"
+
 VAULT_DIR_CONFIG="${vault_dir_config}"
 VAULT_DIR_TLS="${vault_dir_config}/tls"
 VAULT_DIR_DATA="${vault_dir_home}/data"
@@ -12,7 +13,10 @@ VAULT_DIR_LOGS="${vault_dir_logs}"
 VAULT_DIR_BIN="${vault_dir_bin}"
 VAULT_USER="${vault_user_name}"
 VAULT_GROUP="${vault_group_name}"
-VAULT_INSTALL_URL="${vault_install_url}"
+# VAULT_INSTALL_URL="$${vault_install_url}"
+PRODUCT="vault"
+VAULT_VERSION="${vault_version}"
+VERSION=$VAULT_VERSION
 REQUIRED_PACKAGES="unzip"
 ADDITIONAL_PACKAGES="${additional_package_names}"
 
@@ -23,6 +27,31 @@ function log {
   local log_entry="$timestamp [$level] - $message"
 
   echo "$log_entry" | tee -a "$LOGFILE"
+
+}
+
+function detect_architecture {
+  local ARCHITECTURE=""
+  local OS_ARCH_DETECTED=$(uname -m)
+
+  case "$OS_ARCH_DETECTED" in
+    "x86_64"*)
+      ARCHITECTURE="linux_amd64"
+      ;;
+    "aarch64"*)
+      ARCHITECTURE="linux_arm64"
+      ;;
+    "arm"*)
+      ARCHITECTURE="linux_arm"
+      ;;
+    *)
+      log "ERROR" "Unsupported architecture detected: '$OS_ARCH_DETECTED'. "
+      exit_script 1
+      ;;
+  esac
+
+  echo "$ARCHITECTURE"
+
 }
 
 function detect_os_distro {
@@ -69,8 +98,12 @@ function install_packages() {
   if [[ "$os_distro" == "ubuntu" ]]; then
     apt-get update -y
     apt-get install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
-  elif [[ "$OS_DISTRO" == "centos" || "$OS_DISTRO" == "rhel" || "$OS_DISTRO" == "amzn2023" ]]; then
+  elif [[ "$os_distro" == "centos" || "$os_distro" == "rhel" ]]; then
     yum install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
+  elif [[  "$os_distro" == "amzn2023" ]]; then
+    yum install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
+    log "INFO" "Enabling gnupg2-full for Amazon Linux 2023."
+    dnf swap gnupg2-minimal gnupg2-full -y
   else
     log "ERROR" "Unable to determine package manager"
   fi
@@ -110,16 +143,61 @@ function directory_create {
   done
 }
 
+function checksum_verify {
+  local os_arch="$1"
+
+  # https://www.hashicorp.com/en/trust/security
+  # checksum_verify downloads the $$PRODUCT binary and verifies its integrity
+  log "INFO" "Verifying the integrity of the $${PRODUCT} binary."
+  export GNUPGHOME=./.gnupg
+  log "INFO" "Importing HashiCorp GPG key."
+  sudo curl -s https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import
+
+  log "INFO" "Downloading $${PRODUCT} binary"
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_"$${OS_ARCH}".zip
+  log "INFO" "Downloading Vault Enterprise binary checksum files"
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+  log "INFO" "Downloading Vault Enterprise binary checksum signature file"
+  sudo curl -Os https://releases.hashicorp.com/"$${PRODUCT}"/"$${VERSION}"/"$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
+  log "INFO" "Verifying the signature file is untampered."
+  gpg --verify "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS
+  if [[ $? -ne 0 ]]; then
+    log "ERROR" "Gpg verification failed for SHA256SUMS."
+    exit_script 1
+  fi
+  if [ -x "$(command -v sha256sum)" ]; then
+    log "INFO" "Using sha256sum to verify the checksum of the $${PRODUCT} binary."
+    sha256sum -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+  else
+    log "INFO" "Using shasum to verify the checksum of the $${PRODUCT} binary."
+    shasum -a 256 -c "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS --ignore-missing
+	fi
+  if [[ $? -ne 0 ]]; then
+    log "ERROR" "Checksum verification failed for the $${PRODUCT} binary."
+    exit_script 1
+  fi
+  log "INFO" "Checksum verification passed for the $${PRODUCT} binary."
+
+  log "INFO" "Removing the downloaded files to clean up"
+  sudo rm -f "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS "$${PRODUCT}"_"$${VERSION}"_SHA256SUMS.sig
+}
+
 # install_vault_binary downloads the Vault binary and puts it in dedicated bin directory
 function install_vault_binary {
-  log "INFO" "Downloading Vault Enterprise binary"
-  sudo curl -so $VAULT_DIR_BIN/vault.zip $VAULT_INSTALL_URL
+  local os_arch="$1"
+  log "INFO" "Deploying Vault Enterprise binary to $VAULT_DIR_BIN unzip and set permissions"
+  sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip  vault -d $VAULT_DIR_BIN
+  sudo unzip "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip -x vault -d $VAULT_DIR_LICENSE
+  sudo rm -f "$${PRODUCT}"_"$${VAULT_VERSION}"_"$${OS_ARCH}".zip
 
-  log "INFO" "Unzipping Vault Enterprise binary to $VAULT_DIR_BIN"
-  sudo unzip $VAULT_DIR_BIN/vault.zip vault -d $VAULT_DIR_BIN
-  sudo unzip $VAULT_DIR_BIN/vault.zip -x vault -d $VAULT_DIR_LICENSE
+	# Set the permissions for the Vault binary
+  sudo chmod 0755 $VAULT_DIR_BIN/vault
+  sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_BIN/vault
 
-  sudo rm $VAULT_DIR_BIN/vault.zip
+	# Create a symlink to the Vault binary in /usr/local/bin
+  sudo ln -sf $VAULT_DIR_BIN/vault /usr/local/bin/vault
+
+  log "INFO" "Vault binary installed successfully at $VAULT_DIR_BIN/vault"
 }
 
 function install_vault_plugins {
@@ -313,7 +391,7 @@ complete -C $VAULT_DIR_BIN/vault vault
 EOF
 }
 
-exit_script() {
+function exit_script {
   if [[ "$1" == 0 ]]; then
     log "INFO" "Vault custom_data script finished successfully!"
   else
@@ -333,9 +411,15 @@ function prepare_disk() {
   local device_label="$3"
   log "DEBUG" "prepare_disk - device_label; $${device_label}"
 
-  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
-  log "DEBUG" "prepare_disk - ebs_volume_id; $${ebs_volume_id}"
+  # add sleep in to wait longer for the disk attachment
 
+  sleep 20
+
+  local ebs_volume_id=$(aws ec2 describe-volumes --filters Name=attachment.device,Values=$${device_name} Name=attachment.instance-id,Values=$INSTANCE_ID --query 'Volumes[*].{ID:VolumeId}' --region $REGION --output text | tr -d '-' )
+  if [[ -z "$${ebs_volume_id}" ]]; then
+    log "ERROR" "No EBS volume found attached to device $${device_name}"
+    exit_script 1
+  fi
   local device_id=$(readlink -f /dev/disk/by-id/nvme-Amazon_Elastic_Block_Store_$${ebs_volume_id})
   log "DEBUG" "prepare_disk - device_id; $${device_id}"
 
@@ -351,6 +435,8 @@ function prepare_disk() {
 
 main() {
   log "INFO" "Beginning custom_data script."
+	OS_ARCH=$(detect_architecture)
+	log "INFO" "Detected system architecture is '$OS_ARCH'."
   OS_DISTRO=$(detect_os_distro)
   log "INFO" "Detected OS distro is '$OS_DISTRO'."
 
@@ -375,8 +461,11 @@ main() {
   log "INFO" "Creating directories for Vault config and data"
   directory_create
 
+  log "INFO" "Verifying checksum function"
+  checksum_verify $OS_ARCH
+
   log "INFO" "Installing Vault"
-  install_vault_binary
+  install_vault_binary $OS_ARCH
 
   log "INFO" "Installing Vault plugins"
   install_vault_plugins

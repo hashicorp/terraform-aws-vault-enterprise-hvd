@@ -283,10 +283,31 @@ variable "net_ingress_vault_security_group_ids" {
 }
 
 #-----------------------------------------------------------------------------------
-# DNS
+# DNS Route53
 #-----------------------------------------------------------------------------------
 
-# TBD
+variable "create_route53_vault_dns_record" {
+  type        = bool
+  description = "Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required."
+  default     = false
+}
+
+variable "route53_vault_hosted_zone_name" {
+  type        = string
+  description = "Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`."
+  default     = null
+
+  validation {
+    condition     = var.create_route53_vault_dns_record ? var.route53_vault_hosted_zone_name != null : true
+    error_message = "Value must be set when `create_route53_vault_dns_record` is `true`."
+  }
+}
+
+variable "route53_vault_hosted_zone_is_private" {
+  type        = bool
+  description = "Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone."
+  default     = false
+}
 
 
 #-----------------------------------------------------------------------------------
@@ -321,10 +342,32 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
+
 variable "vm_image_id" {
   type        = string
-  description = "The AMI of the image to use"
+  description = "Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro."
   default     = null
+
+  validation {
+    condition     = try((length(var.vm_image_id) > 4 && substr(var.vm_image_id, 0, 4) == "ami-"), var.vm_image_id == null)
+    error_message = "Value must start with \"ami-\"."
+  }
+
+  validation {
+    condition     = var.ec2_os_distro == "centos" ? var.vm_image_id != null : true
+    error_message = "Value must be set to a CentOS AMI ID when `ec2_os_distro` is `centos`."
+  }
+}
+variable "ec2_os_distro" {
+  type        = string
+  description = "Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`."
+  default     = "ubuntu"
+
+  validation {
+    condition     = contains(["ubuntu", "rhel", "al2023", "centos"], var.ec2_os_distro)
+    error_message = "Valid values are `ubuntu`, `rhel`, `al2023`, or `centos`."
+  }
+
 }
 
 variable "vm_boot_disk_configuration" {
@@ -391,9 +434,19 @@ variable "vm_key_pair_name" {
   default     = null
 }
 
+variable "custom_startup_script_template" {
+  type        = string
+  description = "Filename of a custom Vault Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
+  default     = null
+
+  validation {
+    condition     = var.custom_startup_script_template != null ? fileexists("${path.cwd}/templates/${var.custom_startup_script_template}") : true
+    error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
+  }
+}
 variable "ec2_allow_ssm" {
   type        = bool
-  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role, allowing the SSM agent (if present) to function."
+  description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."
   default     = false
 }
 
