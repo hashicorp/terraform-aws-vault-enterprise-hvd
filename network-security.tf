@@ -10,7 +10,7 @@ resource "aws_security_group" "main" {
 }
 
 resource "aws_security_group_rule" "ingress_vault_api_cidr" {
-  count       = 1 # var.security_group_ids == null ? 1 : 0
+  count       = var.net_ingress_vault_cidr_blocks != null && length(var.net_ingress_vault_cidr_blocks) > 0 ? 1 : 0
   type        = "ingress"
   from_port   = 8200 # var.vault_port_api
   to_port     = 8200 # var.vault_port_api
@@ -46,7 +46,7 @@ resource "aws_security_group_rule" "ingress_vault_cluster" {
 }
 
 resource "aws_security_group_rule" "ingress_ssh_cidr" {
-  count       = 1 # var.security_group_ids == null ? 1 : 0
+  count       = var.net_ingress_vault_cidr_blocks != null && length(var.net_ingress_vault_cidr_blocks) > 0 ? 1 : 0
   type        = "ingress"
   from_port   = 22
   to_port     = 22
