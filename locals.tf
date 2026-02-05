@@ -3,7 +3,7 @@
 
 locals {
   vault_seal_attributes = {
-    region     = var.vault_seal_awskms_region == null ? data.aws_region.current.name : var.vault_seal_awskms_region
+    region     = var.vault_seal_awskms_region == null ? data.aws_region.current.region : var.vault_seal_awskms_region
     kms_key_id = var.vault_seal_awskms_key_arn
   }
 }
