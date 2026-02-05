@@ -21,17 +21,17 @@ resource "aws_security_group_rule" "ingress_vault_api_cidr" {
   security_group_id = aws_security_group.main[0].id
 }
 
-# resource "aws_security_group_rule" "ingress_vault_api_sg_ids" {
-#   count     = 1 # var.security_group_ids == null ? 1 : 0
-#   type      = "ingress"
-#   from_port = 8200 # var.vault_port_api
-#   to_port   = 8200 # var.vault_port_api
-#   protocol  = "tcp"
-#   cidr_blocks = concat([data.aws_vpc.vault_vpc.cidr_block], var.ingress_vault_cidr_blocks)
-#   description = "Allow API access to Vault nodes"
+resource "aws_security_group_rule" "ingress_vault_api_sg_ids" {
+  count                    = var.net_ingress_vault_security_group_ids != null && length(var.net_ingress_vault_security_group_ids) > 0 ? length(var.net_ingress_vault_security_group_ids) : 0
+  type                     = "ingress"
+  from_port                = 8200 # var.vault_port_api
+  to_port                  = 8200 # var.vault_port_api
+  protocol                 = "tcp"
+  source_security_group_id = var.net_ingress_vault_security_group_ids[count.index]
+  description              = "Allow API access to Vault nodes from specified security groups"
 
-#   security_group_id = aws_security_group.main[0].id
-# }
+  security_group_id = aws_security_group.main[0].id
+}
 
 resource "aws_security_group_rule" "ingress_vault_cluster" {
   count       = 1 # var.security_group_ids == null ? 1 : 0
@@ -46,13 +46,25 @@ resource "aws_security_group_rule" "ingress_vault_cluster" {
 }
 
 resource "aws_security_group_rule" "ingress_ssh_cidr" {
-  count       = var.net_ingress_vault_cidr_blocks != null && length(var.net_ingress_vault_cidr_blocks) > 0 ? 1 : 0
+  count       = var.net_ingress_ssh_cidr_blocks != null && length(var.net_ingress_ssh_cidr_blocks) > 0 ? 1 : 0
   type        = "ingress"
   from_port   = 22
   to_port     = 22
   protocol    = "tcp"
   cidr_blocks = var.net_ingress_ssh_cidr_blocks
   description = "Allow SSH access to Vault nodes"
+
+  security_group_id = aws_security_group.main[0].id
+}
+
+resource "aws_security_group_rule" "ingress_ssh_sg_ids" {
+  count                    = var.net_ingress_ssh_security_group_ids != null && length(var.net_ingress_ssh_security_group_ids) > 0 ? length(var.net_ingress_ssh_security_group_ids) : 0
+  type                     = "ingress"
+  from_port                = 22
+  to_port                  = 22
+  protocol                 = "tcp"
+  source_security_group_id = var.net_ingress_ssh_security_group_ids[count.index]
+  description              = "Allow SSH access to Vault nodes from specified security groups"
 
   security_group_id = aws_security_group.main[0].id
 }
