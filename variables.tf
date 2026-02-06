@@ -40,7 +40,7 @@ variable "sm_vault_tls_ca_bundle" {
 
 variable "sm_vault_tls_cert_arn" {
   type        = string
-  description = "(required) The ARN of the signed TLS certificate secret in AWS Secrets Manager, Secret should be stored as a base64-encoded string. Secret type should be plaintext.	"
+  description = "(required) The ARN of the signed TLS certificate secret in AWS Secrets Manager, Secret should be stored as a base64-encoded string. Secret type should be plaintext."
   nullable    = false
 }
 
