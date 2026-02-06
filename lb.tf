@@ -55,6 +55,7 @@ resource "aws_security_group" "lb" {
   tags        = var.resource_tags
 }
 
+# Necessary Security Group rules for LB to communicate with Vault instances
 resource "aws_security_group_rule" "egress_lb" {
   count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
   type                     = "egress"
@@ -79,7 +80,9 @@ resource "aws_security_group_rule" "ingress_vault_api_lb" {
 
   security_group_id = aws_security_group.main[0].id
 }
+# END Necessary Security Group rules for LB to communicate with Vault instances
 
+# Necessary Security Group rules for consumer to reach Vault LB
 resource "aws_security_group_rule" "ingress_vault_api_lb_cidr" {
   count       = var.net_ingress_lb_cidr_blocks != null && length(var.net_ingress_lb_cidr_blocks) > 0 ? 1 : 0
   type        = "ingress"
@@ -103,7 +106,7 @@ resource "aws_security_group_rule" "ingress_vault_api_lb_sg_ids" {
 
   security_group_id = aws_security_group.lb[0].id
 }
-
+# END Necessary Security Group rules for consumer to reach Vault LB
 
 resource "aws_lb" "vault_lb" {
   count              = var.load_balancing_scheme == "NONE" ? 0 : 1
