@@ -6,6 +6,11 @@ output "vault_load_balancer_name" {
   description = "The DNS name of the load balancer."
 }
 
+output "vault_load_balancer_security_group_id" {
+  value       = var.load_balancing_scheme == "NONE" ? null : aws_security_group.lb[0].id
+  description = "The ID of the load balancer security group. Allow ingress to this group on 8200 to access Vault through the LB."
+}
+
 output "vault_cli_config" {
   description = "Environment variables to configure the Vault CLI"
   value       = <<-EOF
