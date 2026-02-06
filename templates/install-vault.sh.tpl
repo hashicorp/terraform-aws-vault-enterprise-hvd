@@ -517,10 +517,10 @@ main() {
 
   log "INFO" "Retrieving Vault API TLS certificates from Secret Manager"
   # fetch_tls_certificates
-  retrieve_certs_from_awssm "$sm_vault_tls_cert_arn" "$VAULT_DIR_TLS/cert.pem"
-  retrieve_certs_from_awssm "$sm_vault_tls_cert_key_arn" "$VAULT_DIR_TLS/key.pem"
+  retrieve_certs_from_awssm "${sm_vault_tls_cert_arn}" "$VAULT_DIR_TLS/cert.pem"
+  retrieve_certs_from_awssm "${sm_vault_tls_cert_key_arn}" "$VAULT_DIR_TLS/key.pem"
   %{ if sm_vault_tls_ca_bundle != "NONE" ~}
-  retrieve_certs_from_awssm "$sm_vault_tls_ca_bundle" "$VAULT_DIR_TLS/ca.pem"
+  retrieve_certs_from_awssm "${sm_vault_tls_ca_bundle}" "$VAULT_DIR_TLS/ca.pem"
   %{ endif ~}
 
   log "INFO" "Generating Vault server configuration file"
