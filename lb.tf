@@ -47,6 +47,67 @@ resource "aws_lb_listener" "vault_api" {
   }
 }
 
+resource "aws_security_group" "lb" {
+  count       = var.load_balancing_scheme == "NONE" ? 0 : 1
+  name        = format("%s-lb-sg", var.friendly_name_prefix)
+  description = "Security group for Load Balancer"
+  vpc_id      = var.net_vpc_id
+  tags        = var.resource_tags
+}
+
+# Necessary Security Group rules for LB to communicate with Vault instances
+resource "aws_security_group_rule" "egress_lb" {
+  count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
+  type                     = "egress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  source_security_group_id = aws_security_group.main[0].id
+  protocol                 = "tcp"
+
+  description = "Allow egress traffic from LB to Vault API ports"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
+resource "aws_security_group_rule" "ingress_vault_api_lb" {
+  count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
+  type                     = "ingress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.lb[0].id
+  description              = "Allow API access to Vault nodes from load balancer"
+
+  security_group_id = aws_security_group.main[0].id
+}
+# END Necessary Security Group rules for LB to communicate with Vault instances
+
+# Necessary Security Group rules for consumer to reach Vault LB
+resource "aws_security_group_rule" "ingress_vault_api_lb_cidr" {
+  count       = var.net_ingress_lb_cidr_blocks != null && length(var.net_ingress_lb_cidr_blocks) > 0 ? 1 : 0
+  type        = "ingress"
+  from_port   = var.vault_port_api
+  to_port     = var.vault_port_api
+  protocol    = "tcp"
+  cidr_blocks = var.net_ingress_lb_cidr_blocks
+  description = "Allow API access to Vault API via Load Balancer"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
+resource "aws_security_group_rule" "ingress_vault_api_lb_sg_ids" {
+  count                    = var.net_ingress_lb_security_group_ids != null && length(var.net_ingress_lb_security_group_ids) > 0 ? length(var.net_ingress_lb_security_group_ids) : 0
+  type                     = "ingress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  protocol                 = "tcp"
+  source_security_group_id = var.net_ingress_lb_security_group_ids[count.index]
+  description              = "Allow API access to Vault API via Load Balancer from specified security groups"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+# END Necessary Security Group rules for consumer to reach Vault LB
+
 resource "aws_lb" "vault_lb" {
   count              = var.load_balancing_scheme == "NONE" ? 0 : 1
   name               = format("%s", var.friendly_name_prefix)
@@ -54,4 +115,5 @@ resource "aws_lb" "vault_lb" {
   load_balancer_type = "network"
   subnets            = var.net_lb_subnet_ids == null ? var.net_vault_subnet_ids : var.net_lb_subnet_ids
   tags               = var.resource_tags
+  security_groups    = [aws_security_group.lb[0].id]
 }
