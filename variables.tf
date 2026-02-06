@@ -266,19 +266,31 @@ variable "net_ingress_ssh_cidr_blocks" {
 
 variable "net_ingress_ssh_security_group_ids" {
   type        = list(string)
-  description = "List of CIDR blocks to allow SSH access to Vault instances."
+  description = "List of security group IDs to allow SSH access to Vault instances."
   default     = []
 }
 
 variable "net_ingress_vault_cidr_blocks" {
   type        = list(string)
-  description = "List of CIDR blocks to allow API access to Vault."
+  description = "List of CIDR blocks to allow API access to Vault instances."
   default     = []
 }
 
 variable "net_ingress_vault_security_group_ids" {
   type        = list(string)
-  description = "List of CIDR blocks to allow API access to Vault."
+  description = "List of security group IDs to allow API access to Vault instances."
+  default     = []
+}
+
+variable "net_ingress_lb_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow API access to Vault via Load Balancer."
+  default     = []
+}
+
+variable "net_ingress_lb_security_group_ids" {
+  type        = list(string)
+  description = "List of security group IDs to allow API access to Vault via Load Balancer."
   default     = []
 }
 
