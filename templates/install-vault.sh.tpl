@@ -19,6 +19,7 @@ VAULT_VERSION="${vault_version}"
 VERSION=$VAULT_VERSION
 REQUIRED_PACKAGES="unzip"
 ADDITIONAL_PACKAGES="${additional_package_names}"
+AWS_REGION="${aws_region}"
 
 function log {
   local level="$1"
