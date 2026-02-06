@@ -213,23 +213,7 @@ function install_vault_plugins {
   sudo chown -R $VAULT_USER:$VAULT_GROUP $VAULT_DIR_PLUGINS
 }
 
-# fetch_tls_certificates fetches the TLS certificates from cloud's secret manager
-# function fetch_tls_certificates {
-#   log "INFO" "Retrieving TLS certificate '${sm_vault_tls_cert_arn}' from Secrets Manager."
-#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/cert.pem
 
-#   log "INFO" "Retrieving TLS private key '${sm_vault_tls_cert_key_arn}' from Secrets Manager."
-#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_key_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/key.pem
-
-#   %{ if sm_vault_tls_ca_bundle != "NONE" ~}
-#   log "INFO" "Retrieving CA certificate '${sm_vault_tls_ca_bundle}' from Secrets Manager."
-#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_ca_bundle} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/ca.pem
-#   %{ endif ~}
-
-#   log "INFO" "Setting certificate file permissions and ownership"
-#   sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_TLS/*
-#   sudo chmod 400 $VAULT_DIR_TLS/*
-# }
 
 function retrieve_certs_from_awssm {
   local SECRET_ARN="$1"
@@ -241,7 +225,7 @@ function retrieve_certs_from_awssm {
   if [[ -z "$SECRET_ARN" ]]; then
     log "ERROR" "Secret ARN cannot be empty. Exiting."
     exit_script 5
-  elif [[ "$SECRET_ARN" == "arn:aws:secretsmanager:*" ]]; then
+  elif [[ "$SECRET_ARN" == arn:aws:secretsmanager:* ]]; then
     log "INFO" "Retrieving value of secret '$SECRET_ARN' from AWS Secrets Manager."
     CERT_DATA=$(aws secretsmanager get-secret-value --region $SECRET_REGION --secret-id $SECRET_ARN --query SecretString --output text)
 
@@ -517,7 +501,6 @@ main() {
   fetch_vault_license
 
   log "INFO" "Retrieving Vault API TLS certificates from Secret Manager"
-  # fetch_tls_certificates
   retrieve_certs_from_awssm "${sm_vault_tls_cert_arn}" "$VAULT_DIR_TLS/cert.pem"
   retrieve_certs_from_awssm "${sm_vault_tls_cert_key_arn}" "$VAULT_DIR_TLS/key.pem"
   %{ if sm_vault_tls_ca_bundle != "NONE" ~}
