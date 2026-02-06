@@ -47,6 +47,26 @@ resource "aws_lb_listener" "vault_api" {
   }
 }
 
+resource "aws_security_group" "lb" {
+  count       = var.load_balancing_scheme == "NONE" ? 0 : 1
+  name        = format("%s-lb-sg", var.friendly_name_prefix)
+  description = "Security group to allow access from LB to Vault API on all nodes"
+  vpc_id      = var.net_vpc_id
+  tags        = var.resource_tags
+}
+
+resource "aws_security_group_rule" "ingress_vault_api_lb" {
+  count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
+  type                     = "ingress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.lb[0].id
+  description              = "Allow API access to Vault nodes from specified security groups"
+
+  security_group_id = aws_security_group.main[0].id
+}
+
 resource "aws_lb" "vault_lb" {
   count              = var.load_balancing_scheme == "NONE" ? 0 : 1
   name               = format("%s", var.friendly_name_prefix)
@@ -54,5 +74,5 @@ resource "aws_lb" "vault_lb" {
   load_balancer_type = "network"
   subnets            = var.net_lb_subnet_ids == null ? var.net_vault_subnet_ids : var.net_lb_subnet_ids
   tags               = var.resource_tags
-  security_groups    = [aws_security_group.main[0].id]
+  security_groups    = [aws_security_group.lb[0].id]
 }

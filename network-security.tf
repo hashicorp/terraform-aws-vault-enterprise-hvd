@@ -12,8 +12,8 @@ resource "aws_security_group" "main" {
 resource "aws_security_group_rule" "ingress_vault_api_cidr" {
   count       = var.net_ingress_vault_cidr_blocks != null && length(var.net_ingress_vault_cidr_blocks) > 0 ? 1 : 0
   type        = "ingress"
-  from_port   = 8200 # var.vault_port_api
-  to_port     = 8200 # var.vault_port_api
+  from_port   = var.vault_port_api
+  to_port     = var.vault_port_api
   protocol    = "tcp"
   cidr_blocks = var.net_ingress_vault_cidr_blocks
   description = "Allow API access to Vault nodes"
@@ -24,8 +24,8 @@ resource "aws_security_group_rule" "ingress_vault_api_cidr" {
 resource "aws_security_group_rule" "ingress_vault_api_sg_ids" {
   count                    = var.net_ingress_vault_security_group_ids != null && length(var.net_ingress_vault_security_group_ids) > 0 ? length(var.net_ingress_vault_security_group_ids) : 0
   type                     = "ingress"
-  from_port                = 8200 # var.vault_port_api
-  to_port                  = 8200 # var.vault_port_api
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
   protocol                 = "tcp"
   source_security_group_id = var.net_ingress_vault_security_group_ids[count.index]
   description              = "Allow API access to Vault nodes from specified security groups"
@@ -36,8 +36,8 @@ resource "aws_security_group_rule" "ingress_vault_api_sg_ids" {
 resource "aws_security_group_rule" "ingress_vault_cluster" {
   count       = 1 # var.security_group_ids == null ? 1 : 0
   type        = "ingress"
-  from_port   = 8201 # var.vault_port_cluster
-  to_port     = 8201 # var.vault_port_cluster
+  from_port   = var.vault_port_cluster
+  to_port     = var.vault_port_cluster
   self        = true
   protocol    = "tcp"
   description = "Allow Vault nodes to communicate with each other in HA mode"
@@ -48,8 +48,8 @@ resource "aws_security_group_rule" "ingress_vault_cluster" {
 resource "aws_security_group_rule" "ingress_vault_api" {
   count       = 1 # var.security_group_ids == null ? 1 : 0
   type        = "ingress"
-  from_port   = 8200 # var.vault_port_api
-  to_port     = 8200 # var.vault_port_api
+  from_port   = var.vault_port_api
+  to_port     = var.vault_port_api
   self        = true
   protocol    = "tcp"
   description = "Allow Vault nodes to communicate with each on the API port for auto_join"
