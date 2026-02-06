@@ -77,10 +77,18 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_lb_target_group.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_placement_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/placement_group) | resource |
 | [aws_route53_record.alias_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_security_group.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.egress_all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.egress_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_ssh_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_ssh_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_api_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_api_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_api_lb_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_api_lb_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_api_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ami.al2023](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
@@ -120,10 +128,12 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_iam_role_path"></a> [iam\_role\_path](#input\_iam\_role\_path) | Path for IAM entities | `string` | `"/"` | no |
 | <a name="input_iam_role_permissions_boundary_arn"></a> [iam\_role\_permissions\_boundary\_arn](#input\_iam\_role\_permissions\_boundary\_arn) | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
 | <a name="input_load_balancing_scheme"></a> [load\_balancing\_scheme](#input\_load\_balancing\_scheme) | Type of load balancer to use (INTERNAL, EXTERNAL, or NONE) | `string` | `"INTERNAL"` | no |
+| <a name="input_net_ingress_lb_cidr_blocks"></a> [net\_ingress\_lb\_cidr\_blocks](#input\_net\_ingress\_lb\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
+| <a name="input_net_ingress_lb_security_group_ids"></a> [net\_ingress\_lb\_security\_group\_ids](#input\_net\_ingress\_lb\_security\_group\_ids) | List of security group IDs to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_ssh_cidr_blocks"></a> [net\_ingress\_ssh\_cidr\_blocks](#input\_net\_ingress\_ssh\_cidr\_blocks) | List of CIDR blocks to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
-| <a name="input_net_ingress_ssh_security_group_ids"></a> [net\_ingress\_ssh\_security\_group\_ids](#input\_net\_ingress\_ssh\_security\_group\_ids) | List of CIDR blocks to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
-| <a name="input_net_ingress_vault_cidr_blocks"></a> [net\_ingress\_vault\_cidr\_blocks](#input\_net\_ingress\_vault\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
-| <a name="input_net_ingress_vault_security_group_ids"></a> [net\_ingress\_vault\_security\_group\_ids](#input\_net\_ingress\_vault\_security\_group\_ids) | List of CIDR blocks to allow API access to Vault. | `list(string)` | `[]` | no |
+| <a name="input_net_ingress_ssh_security_group_ids"></a> [net\_ingress\_ssh\_security\_group\_ids](#input\_net\_ingress\_ssh\_security\_group\_ids) | List of security group IDs to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
+| <a name="input_net_ingress_vault_cidr_blocks"></a> [net\_ingress\_vault\_cidr\_blocks](#input\_net\_ingress\_vault\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault instances. | `list(string)` | `[]` | no |
+| <a name="input_net_ingress_vault_security_group_ids"></a> [net\_ingress\_vault\_security\_group\_ids](#input\_net\_ingress\_vault\_security\_group\_ids) | List of security group IDs to allow API access to Vault instances. | `list(string)` | `[]` | no |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | A map containing tags to assign to all resources | `map(string)` | `{}` | no |
 | <a name="input_route53_vault_hosted_zone_is_private"></a> [route53\_vault\_hosted\_zone\_is\_private](#input\_route53\_vault\_hosted\_zone\_is\_private) | Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone. | `bool` | `false` | no |
 | <a name="input_route53_vault_hosted_zone_name"></a> [route53\_vault\_hosted\_zone\_name](#input\_route53\_vault\_hosted\_zone\_name) | Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`. | `string` | `null` | no |
@@ -165,4 +175,5 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 |------|-------------|
 | <a name="output_vault_cli_config"></a> [vault\_cli\_config](#output\_vault\_cli\_config) | Environment variables to configure the Vault CLI |
 | <a name="output_vault_load_balancer_name"></a> [vault\_load\_balancer\_name](#output\_vault\_load\_balancer\_name) | The DNS name of the load balancer. |
+| <a name="output_vault_load_balancer_security_group_id"></a> [vault\_load\_balancer\_security\_group\_id](#output\_vault\_load\_balancer\_security\_group\_id) | The ID of the load balancer security group. Allow ingress to this group on 8200 to access Vault through the LB. |
 <!-- END_TF_DOCS -->
