@@ -265,6 +265,10 @@ function retrieve_certs_from_awssm {
       echo "$CERT_DATA" > $DESTINATION_PATH
     fi
   fi
+	log "INFO" "Setting certificate file permissions and ownership"
+	sudo chown $VAULT_USER:$VAULT_GROUP $DESTINATION_PATH
+	sudo chmod 400 $DESTINATION_PATH
+
 }
 
 
