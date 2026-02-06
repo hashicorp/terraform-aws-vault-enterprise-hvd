@@ -213,22 +213,60 @@ function install_vault_plugins {
 }
 
 # fetch_tls_certificates fetches the TLS certificates from cloud's secret manager
-function fetch_tls_certificates {
-  log "INFO" "Retrieving TLS certificate '${sm_vault_tls_cert_arn}' from Secrets Manager."
-  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/cert.pem
+# function fetch_tls_certificates {
+#   log "INFO" "Retrieving TLS certificate '${sm_vault_tls_cert_arn}' from Secrets Manager."
+#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/cert.pem
 
-  log "INFO" "Retrieving TLS private key '${sm_vault_tls_cert_key_arn}' from Secrets Manager."
-  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_key_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/key.pem
+#   log "INFO" "Retrieving TLS private key '${sm_vault_tls_cert_key_arn}' from Secrets Manager."
+#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_cert_key_arn} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/key.pem
 
-  %{ if sm_vault_tls_ca_bundle != "NONE" ~}
-  log "INFO" "Retrieving CA certificate '${sm_vault_tls_ca_bundle}' from Secrets Manager."
-  aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_ca_bundle} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/ca.pem
-  %{ endif ~}
+#   %{ if sm_vault_tls_ca_bundle != "NONE" ~}
+#   log "INFO" "Retrieving CA certificate '${sm_vault_tls_ca_bundle}' from Secrets Manager."
+#   aws secretsmanager get-secret-value --secret-id ${sm_vault_tls_ca_bundle} --region $REGION --output text --query SecretString > $VAULT_DIR_TLS/ca.pem
+#   %{ endif ~}
 
-  log "INFO" "Setting certificate file permissions and ownership"
-  sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_TLS/*
-  sudo chmod 400 $VAULT_DIR_TLS/*
+#   log "INFO" "Setting certificate file permissions and ownership"
+#   sudo chown $VAULT_USER:$VAULT_GROUP $VAULT_DIR_TLS/*
+#   sudo chmod 400 $VAULT_DIR_TLS/*
+# }
+
+function retrieve_certs_from_awssm {
+  local SECRET_ARN="$1"
+  local DESTINATION_PATH="$2"
+  local SECRET_REGION=$AWS_REGION
+  local CERT_DATA
+  local DECODED_DATA
+
+  if [[ -z "$SECRET_ARN" ]]; then
+    log "ERROR" "Secret ARN cannot be empty. Exiting."
+    exit_script 5
+  elif [[ "$SECRET_ARN" == arn:aws:secretsmanager:* ]]; then
+    log "INFO" "Retrieving value of secret '$SECRET_ARN' from AWS Secrets Manager."
+    CERT_DATA=$(aws secretsmanager get-secret-value --region $SECRET_REGION --secret-id $SECRET_ARN --query SecretString --output text)
+
+    # Check if CERT_DATA is base64 encoded by attempting to decode
+    if DECODED_DATA=$(echo "$CERT_DATA" | base64 -d 2>/dev/null); then
+      log "INFO" "Successfully decoded base64 encoded data. Writing to $DESTINATION_PATH."
+      echo "$DECODED_DATA" > $DESTINATION_PATH
+    else
+      log "WARNING" "Data does not appear to be base64 encoded. Writing as-is to $DESTINATION_PATH."
+      echo "$CERT_DATA" > $DESTINATION_PATH
+    fi
+  else
+    log "WARNING" "Did not detect AWS Secrets Manager secret ARN. Setting value of secret to what was passed in."
+    CERT_DATA="$SECRET_ARN"
+
+    # Check if CERT_DATA is base64 encoded by attempting to decode
+    if DECODED_DATA=$(echo "$CERT_DATA" | base64 -d 2>/dev/null); then
+      log "INFO" "Successfully decoded base64 encoded data. Writing to $DESTINATION_PATH."
+      echo "$DECODED_DATA" > $DESTINATION_PATH
+    else
+      log "INFO" "Data does not appear to be base64 encoded. Writing as-is to $DESTINATION_PATH."
+      echo "$CERT_DATA" > $DESTINATION_PATH
+    fi
+  fi
 }
+
 
 function fetch_vault_license {
   log "INFO" "Retrieving Vault license '${sm_vault_license_arn}' from Secrets Manager."
@@ -474,7 +512,12 @@ main() {
   fetch_vault_license
 
   log "INFO" "Retrieving Vault API TLS certificates from Secret Manager"
-  fetch_tls_certificates
+  # fetch_tls_certificates
+  retrieve_certs_from_awssm "$sm_vault_tls_cert_arn" "$VAULT_DIR_TLS/cert.pem"
+  retrieve_certs_from_awssm "$sm_vault_tls_cert_key_arn" "$VAULT_DIR_TLS/key.pem"
+  %{ if sm_vault_tls_ca_bundle != "NONE" ~}
+  retrieve_certs_from_awssm "$sm_vault_tls_ca_bundle" "$VAULT_DIR_TLS/ca.pem"
+  %{ endif ~}
 
   log "INFO" "Generating Vault server configuration file"
   generate_vault_config
