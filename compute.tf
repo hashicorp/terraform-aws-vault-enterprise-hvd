@@ -5,6 +5,7 @@ locals {
   vault_install_tpl           = var.custom_startup_script_template != null ? "${path.cwd}/templates/${var.custom_startup_script_template}" : "${path.module}/templates/install-vault.sh.tpl"
   user_data_template_rendered = templatefile(local.vault_install_tpl, local.vault_user_data_template_vars)
   vault_user_data_template_vars = {
+    aws_region = data.aws_region.current.name,
     # system paths and settings
     systemd_dir              = var.systemd_dir,
     vault_dir_bin            = var.vault_dir_bin,

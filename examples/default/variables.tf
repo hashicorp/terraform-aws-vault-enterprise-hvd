@@ -34,19 +34,19 @@ variable "sm_vault_license_arn" {
 
 variable "sm_vault_tls_ca_bundle" {
   type        = string
-  description = "(required) The ARN of the CA bundle secret in AWS Secrets Manager"
+  description = "(required) The ARN of the CA bundle secret in AWS Secrets Manager, Secret should be stored as a base64-encoded string. Secret type should be plaintext."
   nullable    = true
 }
 
 variable "sm_vault_tls_cert_arn" {
   type        = string
-  description = "(required) The ARN of the signed TLS certificate secret in AWS Secrets Manager"
+  description = "(required) The ARN of the signed TLS certificate secret in AWS Secrets Manager, Secret should be stored as a base64-encoded string. Secret type should be plaintext."
   nullable    = false
 }
 
 variable "sm_vault_tls_cert_key_arn" {
   type        = string
-  description = "(required) The ARN of the signed TLS certificate's private key secret in AWS Secrets Manager"
+  description = "(required) The ARN of the signed TLS certificate's private key secret in AWS Secrets Manager, Secret should be stored as a base64-encoded string. Secret type should be plaintext."
   nullable    = false
 }
 
