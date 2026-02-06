@@ -55,6 +55,19 @@ resource "aws_security_group" "lb" {
   tags        = var.resource_tags
 }
 
+resource "aws_security_group_rule" "egress_lb" {
+  count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
+  type                     = "egress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  source_security_group_id = aws_security_group.main[0].id
+  protocol                 = "tcp"
+
+  description = "Allow egress traffic from LB to Vault API ports"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
 resource "aws_security_group_rule" "ingress_vault_api_lb" {
   count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
   type                     = "ingress"
