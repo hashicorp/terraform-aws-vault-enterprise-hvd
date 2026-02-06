@@ -68,19 +68,17 @@ resource "aws_security_group_rule" "egress_lb" {
   security_group_id = aws_security_group.lb[0].id
 }
 
-# CONFIRM THIS IS NEEDED
-# resource "aws_security_group_rule" "ingress_vault_api_lb" {
-#   count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
-#   type                     = "ingress"
-#   from_port                = var.vault_port_api
-#   to_port                  = var.vault_port_api
-#   protocol                 = "tcp"
-#   source_security_group_id = aws_security_group.lb[0].id
-#   description              = "Allow API access to Vault nodes from load balancer"
+resource "aws_security_group_rule" "ingress_vault_api_lb" {
+  count                    = var.load_balancing_scheme == "NONE" ? 0 : 1
+  type                     = "ingress"
+  from_port                = var.vault_port_api
+  to_port                  = var.vault_port_api
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.lb[0].id
+  description              = "Allow API access to Vault nodes from load balancer"
 
-#   security_group_id = aws_security_group.main[0].id
-# }
-# END CONFIRM
+  security_group_id = aws_security_group.main[0].id
+}
 
 resource "aws_security_group_rule" "ingress_vault_api_lb_cidr" {
   count       = var.net_ingress_lb_cidr_blocks != null && length(var.net_ingress_lb_cidr_blocks) > 0 ? 1 : 0
