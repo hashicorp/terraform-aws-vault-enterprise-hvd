@@ -250,6 +250,17 @@ function retrieve_certs_from_awssm {
       echo "$CERT_DATA" > $DESTINATION_PATH
     fi
   fi
+	# Validate that the certificate file was created and is not empty
+	if [[ ! -s "$DESTINATION_PATH" ]]; then
+	  log "ERROR" "Certificate file '$DESTINATION_PATH' is empty or missing after retrieval. Aborting."
+	  exit_script 6
+	fi
+
+	# Basic sanity check for PEM-formatted data
+	if ! grep -q "-----BEGIN " "$DESTINATION_PATH"; then
+	  log "ERROR" "Certificate file '$DESTINATION_PATH' does not appear to contain PEM-formatted data. Aborting."
+	  exit_script 7
+	fi
   log "INFO" "Setting certificate file permissions and ownership"
   sudo chown $VAULT_USER:$VAULT_GROUP $DESTINATION_PATH
   sudo chmod 400 $DESTINATION_PATH
