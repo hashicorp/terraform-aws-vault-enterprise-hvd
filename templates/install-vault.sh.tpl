@@ -257,7 +257,7 @@ function retrieve_certs_from_awssm {
 	fi
 
 	# Basic sanity check for PEM-formatted data
-	if ! grep -q "-----BEGIN " "$DESTINATION_PATH"; then
+	if ! grep -q "\-\-\-\-\-BEGIN " "$DESTINATION_PATH"; then
 	  log "ERROR" "Certificate file '$DESTINATION_PATH' does not appear to contain PEM-formatted data. Aborting."
 	  exit_script 7
 	fi
