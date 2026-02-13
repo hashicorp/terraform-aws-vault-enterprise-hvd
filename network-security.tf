@@ -127,6 +127,30 @@ resource "aws_security_group_rule" "ingress_vault_api_lb" {
 
   security_group_id = aws_security_group.main[0].id
 }
+
+resource "aws_security_group_rule" "egress_lb_cluster" {
+  count                    = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? 0 : 1
+  type                     = "egress"
+  from_port                = var.vault_port_cluster
+  to_port                  = var.vault_port_cluster
+  source_security_group_id = aws_security_group.main[0].id
+  protocol                 = "tcp"
+  description              = "Allow egress traffic from LB to Vault cluster ports"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
+resource "aws_security_group_rule" "ingress_vault_cluster_lb" {
+  count                    = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? 0 : 1
+  type                     = "ingress"
+  from_port                = var.vault_port_cluster
+  to_port                  = var.vault_port_cluster
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.lb[0].id
+  description              = "Allow cluster port access to Vault nodes from load balancer"
+
+  security_group_id = aws_security_group.main[0].id
+}
 # END Necessary Security Group rules for LB to communicate with Vault instances
 
 # Necessary Security Group rules for consumer to reach Vault LB
@@ -138,6 +162,30 @@ resource "aws_security_group_rule" "ingress_vault_api_lb_cidr" {
   protocol    = "tcp"
   cidr_blocks = var.net_ingress_lb_cidr_blocks
   description = "Allow API access to Vault API via Load Balancer"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
+resource "aws_security_group_rule" "ingress_vault_cluster_lb_cidr" {
+  count       = var.load_balancing_scheme != "NONE" && var.enable_vault_cluster_port_listener && var.net_ingress_lb_cluster_cidr_blocks != null && length(var.net_ingress_lb_cluster_cidr_blocks) > 0 ? 1 : 0
+  type        = "ingress"
+  from_port   = var.vault_port_cluster
+  to_port     = var.vault_port_cluster
+  protocol    = "tcp"
+  cidr_blocks = var.net_ingress_lb_cluster_cidr_blocks
+  description = "Allow cluster port access to Vault via Load Balancer"
+
+  security_group_id = aws_security_group.lb[0].id
+}
+
+resource "aws_security_group_rule" "ingress_vault_cluster_lb_sg_ids" {
+  for_each                 = toset(var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener || var.net_ingress_lb_cluster_security_group_ids == null ? [] : var.net_ingress_lb_cluster_security_group_ids)
+  type                     = "ingress"
+  from_port                = var.vault_port_cluster
+  to_port                  = var.vault_port_cluster
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+  description              = "Allow cluster port access to Vault via Load Balancer from specified security groups"
 
   security_group_id = aws_security_group.lb[0].id
 }

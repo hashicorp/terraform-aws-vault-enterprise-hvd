@@ -294,6 +294,20 @@ variable "net_ingress_lb_security_group_ids" {
   default     = []
 }
 
+
+
+variable "net_ingress_lb_cluster_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. If not specified, defaults to net_ingress_lb_cidr_blocks."
+  default     = null
+}
+
+variable "net_ingress_lb_cluster_security_group_ids" {
+  type        = list(string)
+  description = "List of security group IDs to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. If not specified, defaults to net_ingress_lb_security_group_ids."
+  default     = null
+}
+
 #-----------------------------------------------------------------------------------
 # DNS Route53
 #-----------------------------------------------------------------------------------
@@ -551,4 +565,16 @@ variable "enable_cross_zone_load_balancing" {
   type        = bool
   description = "Enable cross-zone load balancing for the Network Load Balancer."
   default     = false
+}
+
+
+variable "enable_vault_cluster_port_listener" {
+  type        = bool
+  description = "Enable Network Load Balancer listener on port 8201 (Vault cluster port). When enabled, creates an additional listener and target group for the cluster port."
+  default     = false
+
+  validation {
+    condition     = !var.enable_vault_cluster_port_listener || (var.net_ingress_lb_cluster_cidr_blocks != null || var.net_ingress_lb_cluster_security_group_ids != null)
+    error_message = "When enable_vault_cluster_port_listener is true, at least one of net_ingress_lb_cluster_cidr_blocks or net_ingress_lb_cluster_security_group_ids must be set."
+  }
 }
