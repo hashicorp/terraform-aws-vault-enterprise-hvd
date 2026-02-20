@@ -112,8 +112,8 @@ python convert_markdown_urls.py --repo="owner/repo" --release="v1.0.0" --dry-run
 
 The script handles various Markdown URL formats:
 
-1. Inline links: `[text](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.3.0/.github/scripts/markdown-url-converter/url)`
-2. Image links: `![alt](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.3.0/.github/scripts/markdown-url-converter/url)`
+1. Inline links: `[text](url)`
+2. Image links: `![alt](url)`
 3. Reference-style definitions: `[ref]: url`
 
 ### Nested directory handling

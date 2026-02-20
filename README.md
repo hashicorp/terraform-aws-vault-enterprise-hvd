@@ -50,15 +50,15 @@ Upon first deployment, Vault servers will auto-join and form a fresh cluster. Th
 
 ### Deployment options
 
-see [Deployment customizations](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.3.0/docs/vault-deployment-customizations.md)
+see [Deployment customizations](./docs/vault-deployment-customizations.md)
 
 ### Examples
 
-Example deployment scenarios can be found in the [`examples`](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.3.0/examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
+Example deployment scenarios can be found in the [`examples`](./examples) directory of this repo. These examples cover multiple capabilities of the module and are meant to serve as a starting point for operators.
 
 ### Troubleshooting
 
-see [Deployment Troubleshooting](https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/blob/0.3.0/docs/vault-deployment-troubleshooting.md)
+see [Deployment Troubleshooting](./docs/vault-deployment-troubleshooting.md)
 
 ## Module support
 
