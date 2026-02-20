@@ -126,6 +126,18 @@ tasks:
         --title "{{.MOD_RELEASE}}" \
         --generate-notes --notes-start-tag {{.PREV_TAG}} --verify-tag
       - |
+        RELEASE_NOTES=$(gh release view {{.MOD_RELEASE}} --repo {{.REPO_OWNER}}/{{.MOD_REPO}} --json body --jq .body)
+        TEMP_FILE=$(mktemp)
+        echo "## v{{.MOD_RELEASE}}" > $TEMP_FILE
+        echo "" >> $TEMP_FILE
+        echo "$RELEASE_NOTES" >> $TEMP_FILE
+        echo "" >> $TEMP_FILE
+        tail -n +1 CHANGELOG.md >> $TEMP_FILE
+        mv $TEMP_FILE CHANGELOG.md
+        git add CHANGELOG.md
+        git commit -m "chore: update CHANGELOG.md for v{{.MOD_RELEASE}}"
+        git push origin rel-${MOD_RELEASE}
+      - |
         gh pr create \
         --repo {{.REPO_OWNER}}/{{.MOD_REPO}} \
         --title "Release {{.MOD_RELEASE}}" \
