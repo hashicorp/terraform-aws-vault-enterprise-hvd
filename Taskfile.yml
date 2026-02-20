@@ -127,4 +127,4 @@ tasks:
         --generate-notes --notes-start-tag {{.PREV_TAG}} --verify-tag
       - git push origin --delete rel-${MOD_RELEASE}
       - git checkout main
-      - git branch -D rel-${MOD_RELEASE}
+      # - git branch -D rel-${MOD_RELEASE}
