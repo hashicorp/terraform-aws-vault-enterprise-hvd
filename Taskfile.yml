@@ -125,6 +125,13 @@ tasks:
         --repo {{.REPO_OWNER}}/{{.MOD_REPO}} \
         --title "{{.MOD_RELEASE}}" \
         --generate-notes --notes-start-tag {{.PREV_TAG}} --verify-tag
-      - git push origin --delete rel-${MOD_RELEASE}
+      - |
+        gh pr create \
+        --repo {{.REPO_OWNER}}/{{.MOD_REPO}} \
+        --title "Release {{.MOD_RELEASE}}" \
+        --body "Release version {{.MOD_RELEASE}}" \
+        --base main \
+        --head rel-${MOD_RELEASE}
+
+      # - git push origin --delete rel-${MOD_RELEASE}
       - git checkout main
-      # - git branch -D rel-${MOD_RELEASE}
