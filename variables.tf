@@ -298,13 +298,7 @@ variable "net_ingress_lb_security_group_ids" {
 
 variable "net_ingress_lb_cluster_cidr_blocks" {
   type        = list(string)
-  description = "List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. At least one of net_ingress_lb_cluster_cidr_blocks or net_ingress_lb_cluster_security_group_ids must be specified when the cluster port listener is enabled."
-  default     = null
-}
-
-variable "net_ingress_lb_cluster_security_group_ids" {
-  type        = list(string)
-  description = "List of security group IDs to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. At least one of net_ingress_lb_cluster_cidr_blocks or net_ingress_lb_cluster_security_group_ids must be specified when the cluster port listener is enabled."
+  description = "List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. Required when the cluster port listener is enabled."
   default     = null
 }
 
@@ -574,7 +568,7 @@ variable "enable_vault_cluster_port_listener" {
   default     = false
 
   validation {
-    condition     = !var.enable_vault_cluster_port_listener || (var.net_ingress_lb_cluster_cidr_blocks != null || var.net_ingress_lb_cluster_security_group_ids != null)
-    error_message = "When enable_vault_cluster_port_listener is true, at least one of net_ingress_lb_cluster_cidr_blocks or net_ingress_lb_cluster_security_group_ids must be set."
+    condition     = !var.enable_vault_cluster_port_listener || var.net_ingress_lb_cluster_cidr_blocks != null
+    error_message = "When enable_vault_cluster_port_listener is true, net_ingress_lb_cluster_cidr_blocks must be set."
   }
 }

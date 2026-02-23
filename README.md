@@ -37,9 +37,8 @@ When enabled:
 
 **Access Control (Required):**
 
-When `enable_vault_cluster_port_listener` is `true`, you **must** specify at least one of the following:
+When `enable_vault_cluster_port_listener` is `true`, you **must** specify:
 - `net_ingress_lb_cluster_cidr_blocks` - CIDR blocks allowed to access the cluster port
-- `net_ingress_lb_cluster_security_group_ids` - Security group IDs allowed to access the cluster port
 
 **Note**: This feature is disabled by default to maintain backward compatibility.
 
@@ -51,9 +50,6 @@ enable_vault_cluster_port_listener = true
 
 # Required: Specify access control for cluster port
 net_ingress_lb_cluster_cidr_blocks = ["10.0.0.0/8"]
-# OR
-net_ingress_lb_cluster_security_group_ids = ["sg-0123456789abcdef0"]
-# OR both
 ```
 
 
@@ -170,8 +166,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_iam_role_permissions_boundary_arn"></a> [iam\_role\_permissions\_boundary\_arn](#input\_iam\_role\_permissions\_boundary\_arn) | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
 | <a name="input_load_balancing_scheme"></a> [load\_balancing\_scheme](#input\_load\_balancing\_scheme) | Type of load balancer to use (INTERNAL, EXTERNAL, or NONE) | `string` | `"INTERNAL"` | no |
 | <a name="input_net_ingress_lb_cidr_blocks"></a> [net\_ingress\_lb\_cidr\_blocks](#input\_net\_ingress\_lb\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
-| <a name="input_net_ingress_lb_cluster_cidr_blocks"></a> [net\_ingress\_lb\_cluster\_cidr\_blocks](#input\_net\_ingress\_lb\_cluster\_cidr\_blocks) | List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable\_vault\_cluster\_port\_listener is true. At least one of net\_ingress\_lb\_cluster\_cidr\_blocks or net\_ingress\_lb\_cluster\_security\_group\_ids must be specified when the cluster port listener is enabled. | `list(string)` | `null` | no |
-| <a name="input_net_ingress_lb_cluster_security_group_ids"></a> [net\_ingress\_lb\_cluster\_security\_group\_ids](#input\_net\_ingress\_lb\_cluster\_security\_group\_ids) | List of security group IDs to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable\_vault\_cluster\_port\_listener is true. At least one of net\_ingress\_lb\_cluster\_cidr\_blocks or net\_ingress\_lb\_cluster\_security\_group\_ids must be specified when the cluster port listener is enabled. | `list(string)` | `null` | no |
+| <a name="input_net_ingress_lb_cluster_cidr_blocks"></a> [net\_ingress\_lb\_cluster\_cidr\_blocks](#input\_net\_ingress\_lb\_cluster\_cidr\_blocks) | List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable\_vault\_cluster\_port\_listener is true. Required when the cluster port listener is enabled. | `list(string)` | `null` | no |
 | <a name="input_net_ingress_lb_security_group_ids"></a> [net\_ingress\_lb\_security\_group\_ids](#input\_net\_ingress\_lb\_security\_group\_ids) | List of security group IDs to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_ssh_cidr_blocks"></a> [net\_ingress\_ssh\_cidr\_blocks](#input\_net\_ingress\_ssh\_cidr\_blocks) | List of CIDR blocks to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_ssh_security_group_ids"></a> [net\_ingress\_ssh\_security\_group\_ids](#input\_net\_ingress\_ssh\_security\_group\_ids) | List of security group IDs to allow SSH access to Vault instances. | `list(string)` | `[]` | no |

@@ -46,7 +46,5 @@ vm_key_pair_name = "<example-key>"
 #------------------------------------------------------------------------------
 # enable_vault_cluster_port_listener = true
 
-# Required when enable_vault_cluster_port_listener is true: Dedicated access control for cluster port
-# At least one of the following must be set:
+# Required when enable_vault_cluster_port_listener is true: Specify access control for cluster port
 # net_ingress_lb_cluster_cidr_blocks = ["10.0.0.0/8"]
-# net_ingress_lb_cluster_security_group_ids = ["sg-0123456789abcdef0"]
