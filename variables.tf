@@ -348,6 +348,14 @@ variable "asg_health_check_type" {
     condition     = var.asg_health_check_type == "EC2" || var.asg_health_check_type == "ELB"
     error_message = "The health check type must be either EC2 or ELB."
   }
+
+  validation {
+    condition = !(
+      var.asg_health_check_type == "ELB" &&
+      var.enable_vault_cluster_port_listener
+    )
+    error_message = "asg_health_check_type cannot be 'ELB' when enable_vault_cluster_port_listener is true. The 8201 target group health check only passes for the active Vault node, which would cause the ASG to terminate all standby nodes in an infinite loop."
+  }
 }
 
 variable "asg_health_check_grace_period" {
