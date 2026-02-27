@@ -49,7 +49,7 @@ resource "aws_lb_target_group" "vault_cluster" {
     port     = var.vault_port_api
     timeout  = var.health_check_timeout
     interval = var.health_check_interval
-    path     = "/v1/sys/health"
+    path     = format("/v1/sys/health?drsecondarycode=%s", var.vault_health_endpoints["drsecondarycode"])
   }
 
   stickiness {
