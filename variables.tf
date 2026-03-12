@@ -294,6 +294,14 @@ variable "net_ingress_lb_security_group_ids" {
   default     = []
 }
 
+
+
+variable "net_ingress_lb_cluster_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. Required when the cluster port listener is enabled."
+  default     = null
+}
+
 #-----------------------------------------------------------------------------------
 # DNS Route53
 #-----------------------------------------------------------------------------------
@@ -339,6 +347,14 @@ variable "asg_health_check_type" {
   validation {
     condition     = var.asg_health_check_type == "EC2" || var.asg_health_check_type == "ELB"
     error_message = "The health check type must be either EC2 or ELB."
+  }
+
+  validation {
+    condition = !(
+      var.asg_health_check_type == "ELB" &&
+      var.enable_vault_cluster_port_listener
+    )
+    error_message = "asg_health_check_type cannot be 'ELB' when enable_vault_cluster_port_listener is true. The 8201 target group health check only passes for the active Vault node, which would cause the ASG to terminate all standby nodes in an infinite loop."
   }
 }
 
@@ -551,4 +567,16 @@ variable "enable_cross_zone_load_balancing" {
   type        = bool
   description = "Enable cross-zone load balancing for the Network Load Balancer."
   default     = false
+}
+
+
+variable "enable_vault_cluster_port_listener" {
+  type        = bool
+  description = "Enable Network Load Balancer listener on port 8201 (Vault cluster port). When enabled, creates an additional listener and target group for the cluster port."
+  default     = false
+
+  validation {
+    condition     = !var.enable_vault_cluster_port_listener || var.net_ingress_lb_cluster_cidr_blocks != null
+    error_message = "When enable_vault_cluster_port_listener is true, net_ingress_lb_cluster_cidr_blocks must be set."
+  }
 }

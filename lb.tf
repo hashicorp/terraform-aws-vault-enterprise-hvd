@@ -34,6 +34,30 @@ resource "aws_lb_target_group" "vault_api" {
   }
 }
 
+resource "aws_lb_target_group" "vault_cluster" {
+  count                = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? 0 : 1
+  name                 = format("%s-vault-cluster", var.friendly_name_prefix)
+  target_type          = "instance"
+  port                 = var.vault_port_cluster
+  protocol             = "TCP"
+  vpc_id               = var.net_vpc_id
+  deregistration_delay = var.health_check_deregistration_delay
+  tags                 = var.resource_tags
+
+  health_check {
+    protocol = "HTTPS"
+    port     = var.vault_port_api
+    timeout  = var.health_check_timeout
+    interval = var.health_check_interval
+    path     = format("/v1/sys/health?drsecondarycode=%s", var.vault_health_endpoints["drsecondarycode"])
+  }
+
+  stickiness {
+    type    = "source_ip"
+    enabled = var.stickiness_enabled
+  }
+}
+
 resource "aws_lb_listener" "vault_api" {
   count             = var.load_balancing_scheme == "NONE" ? 0 : 1
   load_balancer_arn = aws_lb.vault_lb[0].id
@@ -44,6 +68,19 @@ resource "aws_lb_listener" "vault_api" {
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.vault_api[0].arn
+  }
+}
+
+resource "aws_lb_listener" "vault_cluster" {
+  count             = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? 0 : 1
+  load_balancer_arn = aws_lb.vault_lb[0].id
+  port              = var.vault_port_cluster
+  protocol          = "TCP"
+  tags              = var.resource_tags
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.vault_cluster[0].arn
   }
 }
 

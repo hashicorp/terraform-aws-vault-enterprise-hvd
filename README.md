@@ -94,13 +94,16 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_launch_template.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
 | [aws_lb.vault_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
 | [aws_lb_listener.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener.vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
 | [aws_lb_target_group.vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
+| [aws_lb_target_group.vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
 | [aws_placement_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/placement_group) | resource |
 | [aws_route53_record.alias_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
 | [aws_security_group.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group.main](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_security_group_rule.egress_all](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.egress_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.egress_lb_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_ssh_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_ssh_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_api](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
@@ -110,6 +113,8 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_security_group_rule.ingress_vault_api_lb_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_api_sg_ids](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_security_group_rule.ingress_vault_cluster](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_cluster_lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
+| [aws_security_group_rule.ingress_vault_cluster_lb_cidr](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group_rule) | resource |
 | [aws_ami.al2023](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
@@ -142,6 +147,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_ec2_allow_ssm"></a> [ec2\_allow\_ssm](#input\_ec2\_allow\_ssm) | Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function. | `bool` | `false` | no |
 | <a name="input_ec2_os_distro"></a> [ec2\_os\_distro](#input\_ec2\_os\_distro) | Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`. | `string` | `"ubuntu"` | no |
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Enable cross-zone load balancing for the Network Load Balancer. | `bool` | `false` | no |
+| <a name="input_enable_vault_cluster_port_listener"></a> [enable\_vault\_cluster\_port\_listener](#input\_enable\_vault\_cluster\_port\_listener) | Enable Network Load Balancer listener on port 8201 (Vault cluster port). When enabled, creates an additional listener and target group for the cluster port. | `bool` | `false` | no |
 | <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
 | <a name="input_health_check_deregistration_delay"></a> [health\_check\_deregistration\_delay](#input\_health\_check\_deregistration\_delay) | Amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused. The range is 0-3600 seconds. | `number` | `15` | no |
 | <a name="input_health_check_interval"></a> [health\_check\_interval](#input\_health\_check\_interval) | Approximate amount of time, in seconds, between health checks of an individual target. The range is 5-300. | `number` | `5` | no |
@@ -150,6 +156,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_iam_role_permissions_boundary_arn"></a> [iam\_role\_permissions\_boundary\_arn](#input\_iam\_role\_permissions\_boundary\_arn) | The ARN of the policy that is used to set the permissions boundary for the role | `string` | `null` | no |
 | <a name="input_load_balancing_scheme"></a> [load\_balancing\_scheme](#input\_load\_balancing\_scheme) | Type of load balancer to use (INTERNAL, EXTERNAL, or NONE) | `string` | `"INTERNAL"` | no |
 | <a name="input_net_ingress_lb_cidr_blocks"></a> [net\_ingress\_lb\_cidr\_blocks](#input\_net\_ingress\_lb\_cidr\_blocks) | List of CIDR blocks to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
+| <a name="input_net_ingress_lb_cluster_cidr_blocks"></a> [net\_ingress\_lb\_cluster\_cidr\_blocks](#input\_net\_ingress\_lb\_cluster\_cidr\_blocks) | List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable\_vault\_cluster\_port\_listener is true. Required when the cluster port listener is enabled. | `list(string)` | `null` | no |
 | <a name="input_net_ingress_lb_security_group_ids"></a> [net\_ingress\_lb\_security\_group\_ids](#input\_net\_ingress\_lb\_security\_group\_ids) | List of security group IDs to allow API access to Vault via Load Balancer. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_ssh_cidr_blocks"></a> [net\_ingress\_ssh\_cidr\_blocks](#input\_net\_ingress\_ssh\_cidr\_blocks) | List of CIDR blocks to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
 | <a name="input_net_ingress_ssh_security_group_ids"></a> [net\_ingress\_ssh\_security\_group\_ids](#input\_net\_ingress\_ssh\_security\_group\_ids) | List of security group IDs to allow SSH access to Vault instances. | `list(string)` | `[]` | no |
@@ -195,6 +202,8 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | Name | Description |
 |------|-------------|
 | <a name="output_vault_cli_config"></a> [vault\_cli\_config](#output\_vault\_cli\_config) | Environment variables to configure the Vault CLI |
+| <a name="output_vault_cluster_listener_arn"></a> [vault\_cluster\_listener\_arn](#output\_vault\_cluster\_listener\_arn) | ARN of the Vault cluster port (8201) listener |
+| <a name="output_vault_cluster_target_group_arn"></a> [vault\_cluster\_target\_group\_arn](#output\_vault\_cluster\_target\_group\_arn) | ARN of the Vault cluster port (8201) target group |
 | <a name="output_vault_load_balancer_name"></a> [vault\_load\_balancer\_name](#output\_vault\_load\_balancer\_name) | The DNS name of the load balancer. |
 | <a name="output_vault_load_balancer_security_group_id"></a> [vault\_load\_balancer\_security\_group\_id](#output\_vault\_load\_balancer\_security\_group\_id) | The ID of the load balancer security group. Allow ingress to this group on 8200 (or specified `var.vault_port_api`) to access Vault through the LB. |
 <!-- END_TF_DOCS -->

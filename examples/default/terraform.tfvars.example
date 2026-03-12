@@ -43,3 +43,12 @@ vault_seal_awskms_key_arn = "<arn:aws:kms:us-east-2:727169316875:key/bafef8c5-85
 # Compute
 #------------------------------------------------------------------------------
 vm_key_pair_name = "<example-key>"
+
+
+#------------------------------------------------------------------------------
+# Optional: Enable Network Load Balancer listener on port 8201 (Vault cluster port)
+#------------------------------------------------------------------------------
+# enable_vault_cluster_port_listener = true
+
+# Required when enable_vault_cluster_port_listener is true: Specify access control for cluster port
+# net_ingress_lb_cluster_cidr_blocks = ["10.0.0.0/8"]

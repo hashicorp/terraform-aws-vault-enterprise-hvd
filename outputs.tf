@@ -26,3 +26,14 @@ output "vault_cli_config" {
     %{endif~}
   EOF
 }
+
+
+output "vault_cluster_target_group_arn" {
+  description = "ARN of the Vault cluster port (8201) target group"
+  value       = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? null : aws_lb_target_group.vault_cluster[0].arn
+}
+
+output "vault_cluster_listener_arn" {
+  description = "ARN of the Vault cluster port (8201) listener"
+  value       = var.load_balancing_scheme == "NONE" || !var.enable_vault_cluster_port_listener ? null : aws_lb_listener.vault_cluster[0].arn
+}
