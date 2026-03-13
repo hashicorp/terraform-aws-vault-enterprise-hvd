@@ -1,3 +1,12 @@
+## v0.3.1
+
+## What's Changed
+* Rel 0.3.0 by @abuxton in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/47
+* feat: add vault cluster TCP 8201 listener by @abuxton in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/46
+
+
+**Full Changelog**: https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/compare/0.3.0...0.3.1
+
 # Changelog
 
 ## v0.3.0
