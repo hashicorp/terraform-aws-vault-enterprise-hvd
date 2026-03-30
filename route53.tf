@@ -6,6 +6,7 @@ data "aws_route53_zone" "vault" {
 
   name         = var.route53_vault_hosted_zone_name
   private_zone = var.route53_vault_hosted_zone_is_private
+  vpc_id       = var.route53_vault_hosted_zone_is_private ? var.net_vpc_id : null
 }
 
 resource "aws_route53_record" "alias_record" {
