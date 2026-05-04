@@ -408,7 +408,6 @@ variable "placement_group_partition_count" {
   }
 }
 
-
 variable "vm_image_id" {
   type        = string
   description = "Custom AMI ID for EC2 launch template. If specified, value of `ec2_os_distro` must coincide with this custom AMI OS distro."
