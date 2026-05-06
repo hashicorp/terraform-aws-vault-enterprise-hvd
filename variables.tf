@@ -370,6 +370,43 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
+variable "placement_group_strategy" {
+  type        = string
+  description = "The placement group strategy to use for the Vault nodes. Valid values are `cluster`, `partition`, and `spread`."
+  default     = "spread"
+
+  validation {
+    condition     = contains(["cluster", "partition", "spread"], var.placement_group_strategy)
+    error_message = "Valid values are `cluster`, `partition`, and `spread`."
+  }
+}
+
+variable "placement_group_spread_level" {
+  type        = string
+  description = "The spread level for the placement group when `placement_group_strategy` is `spread`. Valid values are `host` and `rack`."
+  default     = "rack"
+
+  validation {
+    condition     = contains(["host", "rack"], var.placement_group_spread_level)
+    error_message = "Valid values are `host` and `rack`."
+  }
+
+  validation {
+    condition     = var.placement_group_strategy == "spread" || var.placement_group_spread_level == "rack"
+    error_message = "`placement_group_spread_level` can only be set to a non-default value when `placement_group_strategy` is `spread`."
+  }
+}
+
+variable "placement_group_partition_count" {
+  type        = number
+  description = "The number of partitions for the placement group. This can only be set when `placement_group_strategy` is `partition`."
+  default     = null
+
+  validation {
+    condition     = var.placement_group_partition_count == null || var.placement_group_strategy == "partition"
+    error_message = "`placement_group_partition_count` can only be set when `placement_group_strategy` is `partition`."
+  }
+}
 
 variable "vm_image_id" {
   type        = string
@@ -472,11 +509,14 @@ variable "custom_startup_script_template" {
     error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
   }
 }
+
 variable "ec2_allow_ssm" {
   type        = bool
   description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."
   default     = false
 }
+
+
 
 #-----------------------------------------------------------------------------------
 # IAM variables

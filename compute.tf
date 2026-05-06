@@ -123,10 +123,11 @@ resource "aws_launch_template" "main" {
 }
 
 resource "aws_placement_group" "main" {
-  name         = format("%s-pg", var.friendly_name_prefix)
-  strategy     = "spread"
-  spread_level = "rack"
-  tags         = var.resource_tags
+  name            = format("%s-pg", var.friendly_name_prefix)
+  strategy        = var.placement_group_strategy
+  partition_count = var.placement_group_strategy == "partition" ? var.placement_group_partition_count : null
+  spread_level    = var.placement_group_strategy == "spread" ? var.placement_group_spread_level : null
+  tags            = var.resource_tags
 }
 
 resource "aws_autoscaling_group" "main" {

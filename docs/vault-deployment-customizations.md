@@ -179,6 +179,19 @@ net_ingress_ssh_security_group_ids = ["sg-bastion"]
 - Security group ID rules use `for_each` for proper lifecycle management.
 - Vault instances allow API traffic (port 8200) from each other for `auto_join` discovery.
 
+## Placement groups
+
+For nearly all deployments, you do not need to set any placement group input variables. The default behavior is sufficient for most use cases: the module creates a spread placement group with rack-level spreading, which helps keep instances in the same Availability Zone on separate racks. In practice, this is typically what you want when a voter and non-voter share the same redundancy zone.
+
+If your deployment is constrained to a single Availability Zone, you can instead use the partition placement group options:
+
+```hcl
+placement_group_strategy        = "partition"
+placement_group_partition_count = 3
+```
+
+This lets AWS spread hosts across partitions within that Availability Zone. You can then read the [partition number from EC2 instance metadata](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#:~:text=placement/partition%2Dnumber) and use it to derive or assign Vault redundancy zones. This will require a custom startup script.
+
 ## Deployment troubleshooting
 
 In the `compute.tf`, there is a commented out local file resource that will render the Vault custom data script to a local file where this module is being run. This can be useful for reviewing the custom data script as it will be rendered on the deployed VM. This file will contain sensitive values, so do _not_ commit this and delete this file when done troubleshooting.
