@@ -1,3 +1,13 @@
+## v0.4.0
+
+## What's Changed
+* Add VPC filter for route 53 zone lookup if it's a private zone by @nphilbrook in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/49
+* Release 0.3.1 by @abuxton in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/48
+* Add placement group variables for strategy, spread_level, and partition count by @nphilbrook in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/50
+
+
+**Full Changelog**: https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/compare/0.3.1...0.4.0
+
 # Changelog
 
 ## v0.3.1
