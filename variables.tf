@@ -499,6 +499,12 @@ variable "vm_key_pair_name" {
   default     = null
 }
 
+variable "vm_ebs_kms_key_id" {
+  type        = string
+  description = "The KMS key ID to use for launch template EBS block device mappings. Leave null to use the account default EBS KMS key."
+  default     = null
+}
+
 variable "custom_startup_script_template" {
   type        = string
   description = "Filename of a custom Vault Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
