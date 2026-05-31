@@ -96,6 +96,37 @@ data "aws_ami" "al2023" {
   }
 }
 
+data "aws_ami" "sles" {
+  count = var.ec2_os_distro == "sles" && var.vm_image_id == null ? 1 : 0
+
+  # Owner account ID for official SUSE-published AMIs.
+  owners      = ["013907871322"]
+  most_recent = true
+
+  # Pins to the standard pay-as-you-go SLES 15 SP7 image and selects the
+  # latest build. The "vYYYYMMDD" date glob excludes the "ecs", "byos", and
+  # "sapcal" variants while allowing the newest build date to be chosen.
+  filter {
+    name   = "name"
+    values = ["suse-sles-15-sp7-v????????-hvm-ssd-x86_64"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "state"
+    values = ["available"]
+  }
+}
+
 #------------------------------------------------------------------------------
 # Launch template
 #------------------------------------------------------------------------------
@@ -107,6 +138,7 @@ locals {
     join("", data.aws_ami.ubuntu.*.image_id),
     join("", data.aws_ami.rhel.*.image_id),
     join("", data.aws_ami.al2023.*.image_id),
+    join("", data.aws_ami.sles.*.image_id),
   ])
 }
 

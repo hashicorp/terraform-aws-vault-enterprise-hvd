@@ -72,6 +72,9 @@ function detect_os_distro {
     "Amazon Linux"*)
       OS_DISTRO_DETECTED="amzn2023"
       ;;
+    "SLES"*)
+      OS_DISTRO_DETECTED="sles"
+      ;;
     *)
       log "ERROR" "'$OS_DISTRO_NAME' is not a supported Linux OS distro for Vault."
       exit_script 1
@@ -105,6 +108,10 @@ function install_packages() {
     yum install -y $REQUIRED_PACKAGES $ADDITIONAL_PACKAGES
     log "INFO" "Enabling gnupg2-full for Amazon Linux 2023."
     dnf swap gnupg2-minimal gnupg2-full -y
+  elif [[ "$os_distro" == "sles" ]]; then
+    zypper --non-interactive refresh
+    # gpg2 provides the `gpg` binary required for checksum signature verification.
+    zypper --non-interactive install $REQUIRED_PACKAGES gpg2 $ADDITIONAL_PACKAGES
   else
     log "ERROR" "Unable to determine package manager"
   fi
@@ -467,6 +474,11 @@ function prepare_disk() {
   mkfs.ext4 -m 0 -E lazy_itable_init=0,lazy_journal_init=0 -L $device_label $${device_id}
 
   echo "LABEL=$device_label $device_mountpoint ext4 defaults 0 2" >> /etc/fstab
+
+  # Wait for udev to process the new filesystem so the /dev/disk/by-label
+  # symlink exists before mounting by LABEL. Without this, mounting can race
+  # ahead of udev on some distributions (e.g. SLES) and fail to find the label.
+  udevadm settle
 
   mount -a
 }

@@ -30,6 +30,7 @@ This module supports the following Linux distributions via the `ec2_os_distro` v
 | Ubuntu 22.04 LTS | `ubuntu` (default) | Canonical |
 | RHEL 9 | `rhel` | Red Hat |
 | Amazon Linux 2023 | `al2023` | Amazon |
+| SLES 15 SP7 | `sles` | SUSE |
 | CentOS | `centos` | Custom AMI required |
 
 > **Note:** For CentOS deployments, you must provide a custom AMI ID via `vm_image_id`.
@@ -118,6 +119,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | [aws_ami.al2023](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.rhel](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.selected](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_ami.sles](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_ami.ubuntu](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_kms_key.vault_unseal](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_partition.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/partition) | data source |
@@ -145,7 +147,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_create_route53_vault_dns_record"></a> [create\_route53\_vault\_dns\_record](#input\_create\_route53\_vault\_dns\_record) | Boolean to create Route53 Alias Record for `vault_hostname` resolving to Load Balancer DNS name. If `true`, `route53_vault_hosted_zone_name` is also required. | `bool` | `false` | no |
 | <a name="input_custom_startup_script_template"></a> [custom\_startup\_script\_template](#input\_custom\_startup\_script\_template) | Filename of a custom Vault Install script template to use in place of the built-in user\_data script. The file must exist within a directory named './templates' in your current working directory. | `string` | `null` | no |
 | <a name="input_ec2_allow_ssm"></a> [ec2\_allow\_ssm](#input\_ec2\_allow\_ssm) | Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function. | `bool` | `false` | no |
-| <a name="input_ec2_os_distro"></a> [ec2\_os\_distro](#input\_ec2\_os\_distro) | Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`. | `string` | `"ubuntu"` | no |
+| <a name="input_ec2_os_distro"></a> [ec2\_os\_distro](#input\_ec2\_os\_distro) | Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `sles`, `centos`. | `string` | `"ubuntu"` | no |
 | <a name="input_enable_cross_zone_load_balancing"></a> [enable\_cross\_zone\_load\_balancing](#input\_enable\_cross\_zone\_load\_balancing) | Enable cross-zone load balancing for the Network Load Balancer. | `bool` | `false` | no |
 | <a name="input_enable_vault_cluster_port_listener"></a> [enable\_vault\_cluster\_port\_listener](#input\_enable\_vault\_cluster\_port\_listener) | Enable Network Load Balancer listener on port 8201 (Vault cluster port). When enabled, creates an additional listener and target group for the cluster port. | `bool` | `false` | no |
 | <a name="input_friendly_name_prefix"></a> [friendly\_name\_prefix](#input\_friendly\_name\_prefix) | Name prefix to use when naming cloud resources | `string` | `"vault"` | no |
@@ -169,7 +171,7 @@ Please note that there is no official Service Level Agreement (SLA) for support 
 | <a name="input_route53_vault_hosted_zone_is_private"></a> [route53\_vault\_hosted\_zone\_is\_private](#input\_route53\_vault\_hosted\_zone\_is\_private) | Boolean indicating if `route53_vault_hosted_zone_name` is a private hosted zone. | `bool` | `false` | no |
 | <a name="input_route53_vault_hosted_zone_name"></a> [route53\_vault\_hosted\_zone\_name](#input\_route53\_vault\_hosted\_zone\_name) | Route53 Hosted Zone name to create `vault_hostname` Alias record in. Required if `create_route53_vault_dns_record` is `true`. | `string` | `null` | no |
 | <a name="input_stickiness_enabled"></a> [stickiness\_enabled](#input\_stickiness\_enabled) | Enable sticky sessions by client IP address for the load balancer. | `bool` | `true` | no |
-| <a name="input_systemd_dir"></a> [systemd\_dir](#input\_systemd\_dir) | Path to systemd directory for unit files | `string` | `"/lib/systemd/system"` | no |
+| <a name="input_systemd_dir"></a> [systemd\_dir](#input\_systemd\_dir) | Path to systemd directory for unit files. Defaults to the canonical systemd system unit path, which resolves correctly on all supported distros (Ubuntu, RHEL, Amazon Linux 2023, and SLES). | `string` | `"/usr/lib/systemd/system"` | no |
 | <a name="input_vault_default_lease_ttl_duration"></a> [vault\_default\_lease\_ttl\_duration](#input\_vault\_default\_lease\_ttl\_duration) | The default lease TTL expressed as a time duration in hours, minutes and/or seconds (e.g. `4h30m10s`) | `string` | `"1h"` | no |
 | <a name="input_vault_dir_bin"></a> [vault\_dir\_bin](#input\_vault\_dir\_bin) | The bin directory for the Vault binary | `string` | `"/usr/bin"` | no |
 | <a name="input_vault_dir_config"></a> [vault\_dir\_config](#input\_vault\_dir\_config) | The directory for Vault server configuration file(s) | `string` | `"/etc/vault.d"` | no |

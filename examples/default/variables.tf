@@ -195,8 +195,8 @@ variable "vault_group_name" {
 
 variable "systemd_dir" {
   type        = string
-  description = "Path to systemd directory for unit files"
-  default     = "/lib/systemd/system"
+  description = "Path to systemd directory for unit files. Defaults to the canonical systemd system unit path, which resolves correctly on all supported distros (Ubuntu, RHEL, Amazon Linux 2023, and SLES)."
+  default     = "/usr/lib/systemd/system"
 }
 
 variable "vault_dir_bin" {
@@ -360,12 +360,12 @@ variable "vm_image_id" {
 }
 variable "ec2_os_distro" {
   type        = string
-  description = "Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `centos`."
+  description = "Linux OS distribution type for EC2 instance. Choose from `al2023`, `ubuntu`, `rhel`, `sles`, `centos`."
   default     = "ubuntu"
 
   validation {
-    condition     = contains(["ubuntu", "rhel", "al2023", "centos"], var.ec2_os_distro)
-    error_message = "Valid values are `ubuntu`, `rhel`, `al2023`, or `centos`."
+    condition     = contains(["ubuntu", "rhel", "al2023", "sles", "centos"], var.ec2_os_distro)
+    error_message = "Valid values are `ubuntu`, `rhel`, `al2023`, `sles`, or `centos`."
   }
 
 }
