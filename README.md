@@ -30,7 +30,7 @@ This module supports the following Linux distributions via the `ec2_os_distro` v
 | Ubuntu 22.04 LTS | `ubuntu` (default) | Canonical |
 | RHEL 9 | `rhel` | Red Hat |
 | Amazon Linux 2023 | `al2023` | Amazon |
-| SLES 15 SP7 | `sles` | SUSE |
+| SLES 15 | `sles` | SUSE |
 | CentOS | `centos` | Custom AMI required |
 
 > **Note:** For CentOS deployments, you must provide a custom AMI ID via `vm_image_id`.

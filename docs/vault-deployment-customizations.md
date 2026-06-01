@@ -47,12 +47,14 @@ ec2_os_distro = "<matching-os-distro>"
 | `ubuntu` | Ubuntu 22.04+ compatible |
 | `rhel` | RHEL 9 compatible |
 | `al2023` | Amazon Linux 2023 compatible |
+| `sles` | SUSE Linux Enterprise Server |
 | `centos` | CentOS (custom AMI required) |
 
 ### Important notes
 
 - The `ec2_os_distro` value **must** match your custom AMI's operating system to ensure the correct package manager is used during installation.
 - For CentOS, you **must** provide a custom AMI via `vm_image_id` as there is no default CentOS AMI data source.
+- For SLES, the default AMI lookup selects the standard SUSE pay-as-you-go image. AWS Marketplace or paid AMI terms and billing may apply before instances can launch.
 - AMI IDs must start with `ami-`.
 
 ### Example: RHEL custom AMI

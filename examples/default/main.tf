@@ -17,12 +17,14 @@ module "default_example" {
   #------------------------------------------------------------------------------
   # Networking
   #------------------------------------------------------------------------------
-  net_vpc_id                    = var.net_vpc_id
-  load_balancing_scheme         = var.load_balancing_scheme
-  net_vault_subnet_ids          = var.net_vault_subnet_ids
-  net_lb_subnet_ids             = var.net_lb_subnet_ids
-  net_ingress_vault_cidr_blocks = var.net_ingress_vault_cidr_blocks
-  net_ingress_ssh_cidr_blocks   = var.net_ingress_ssh_cidr_blocks
+  net_vpc_id                        = var.net_vpc_id
+  load_balancing_scheme             = var.load_balancing_scheme
+  net_vault_subnet_ids              = var.net_vault_subnet_ids
+  net_lb_subnet_ids                 = var.net_lb_subnet_ids
+  net_ingress_lb_cidr_blocks        = var.net_ingress_lb_cidr_blocks
+  net_ingress_lb_security_group_ids = var.net_ingress_lb_security_group_ids
+  net_ingress_vault_cidr_blocks     = var.net_ingress_vault_cidr_blocks
+  net_ingress_ssh_cidr_blocks       = var.net_ingress_ssh_cidr_blocks
 
   #------------------------------------------------------------------------------
   # AWS Secrets Manager installation secrets and AWS KMS unseal key
@@ -38,5 +40,8 @@ module "default_example" {
   #------------------------------------------------------------------------------
   vm_key_pair_name = var.vm_key_pair_name
   vm_instance_type = "m5.2xlarge"
+  vm_image_id      = var.vm_image_id
+  ec2_os_distro    = var.ec2_os_distro
+  systemd_dir      = var.systemd_dir
   asg_node_count   = 3
 }
