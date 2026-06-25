@@ -64,6 +64,7 @@ resource "aws_launch_template" "main" {
       volume_size           = var.vm_boot_disk_configuration.volume_size
       delete_on_termination = var.vm_boot_disk_configuration.delete_on_termination
       encrypted             = var.vm_vault_data_disk_configuration.encrypted
+      kms_key_id            = var.vm_ebs_kms_key_id
     }
   }
 
@@ -78,6 +79,7 @@ resource "aws_launch_template" "main" {
       throughput            = var.vm_vault_data_disk_configuration.volume_throughput
       delete_on_termination = var.vm_vault_data_disk_configuration.delete_on_termination
       encrypted             = var.vm_vault_data_disk_configuration.encrypted
+      kms_key_id            = var.vm_ebs_kms_key_id
     }
   }
 
@@ -90,6 +92,7 @@ resource "aws_launch_template" "main" {
       volume_size           = var.vm_vault_audit_disk_configuration.volume_size
       delete_on_termination = var.vm_vault_audit_disk_configuration.delete_on_termination
       encrypted             = var.vm_vault_audit_disk_configuration.encrypted
+      kms_key_id            = var.vm_ebs_kms_key_id
     }
   }
 

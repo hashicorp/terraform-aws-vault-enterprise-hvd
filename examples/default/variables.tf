@@ -266,20 +266,40 @@ variable "net_ingress_ssh_cidr_blocks" {
 
 variable "net_ingress_ssh_security_group_ids" {
   type        = list(string)
-  description = "List of CIDR blocks to allow SSH access to Vault instances."
+  description = "List of security group IDs to allow SSH access to Vault instances."
   default     = []
 }
 
 variable "net_ingress_vault_cidr_blocks" {
   type        = list(string)
-  description = "List of CIDR blocks to allow API access to Vault."
+  description = "List of CIDR blocks to allow API access to Vault instances."
   default     = []
 }
 
 variable "net_ingress_vault_security_group_ids" {
   type        = list(string)
-  description = "List of CIDR blocks to allow API access to Vault."
+  description = "List of security group IDs to allow API access to Vault instances."
   default     = []
+}
+
+variable "net_ingress_lb_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow API access to Vault via Load Balancer."
+  default     = []
+}
+
+variable "net_ingress_lb_security_group_ids" {
+  type        = list(string)
+  description = "List of security group IDs to allow API access to Vault via Load Balancer."
+  default     = []
+}
+
+
+
+variable "net_ingress_lb_cluster_cidr_blocks" {
+  type        = list(string)
+  description = "List of CIDR blocks to allow cluster port (8201) access to Vault via Load Balancer. Only used when enable_vault_cluster_port_listener is true. Required when the cluster port listener is enabled."
+  default     = null
 }
 
 #-----------------------------------------------------------------------------------
@@ -328,6 +348,14 @@ variable "asg_health_check_type" {
     condition     = var.asg_health_check_type == "EC2" || var.asg_health_check_type == "ELB"
     error_message = "The health check type must be either EC2 or ELB."
   }
+
+  validation {
+    condition = !(
+      var.asg_health_check_type == "ELB" &&
+      var.enable_vault_cluster_port_listener
+    )
+    error_message = "asg_health_check_type cannot be 'ELB' when enable_vault_cluster_port_listener is true. The 8201 target group health check only passes for the active Vault node, which would cause the ASG to terminate all standby nodes in an infinite loop."
+  }
 }
 
 variable "asg_health_check_grace_period" {
@@ -342,6 +370,43 @@ variable "vm_instance_type" {
   default     = "m7i.large"
 }
 
+variable "placement_group_strategy" {
+  type        = string
+  description = "The placement group strategy to use for the Vault nodes. Valid values are `cluster`, `partition`, and `spread`."
+  default     = "spread"
+
+  validation {
+    condition     = contains(["cluster", "partition", "spread"], var.placement_group_strategy)
+    error_message = "Valid values are `cluster`, `partition`, and `spread`."
+  }
+}
+
+variable "placement_group_spread_level" {
+  type        = string
+  description = "The spread level for the placement group when `placement_group_strategy` is `spread`. Valid values are `host` and `rack`."
+  default     = "rack"
+
+  validation {
+    condition     = contains(["host", "rack"], var.placement_group_spread_level)
+    error_message = "Valid values are `host` and `rack`."
+  }
+
+  validation {
+    condition     = var.placement_group_strategy == "spread" || var.placement_group_spread_level == "rack"
+    error_message = "`placement_group_spread_level` can only be set to a non-default value when `placement_group_strategy` is `spread`."
+  }
+}
+
+variable "placement_group_partition_count" {
+  type        = number
+  description = "The number of partitions for the placement group. This can only be set when `placement_group_strategy` is `partition`."
+  default     = null
+
+  validation {
+    condition     = var.placement_group_partition_count == null || var.placement_group_strategy == "partition"
+    error_message = "`placement_group_partition_count` can only be set when `placement_group_strategy` is `partition`."
+  }
+}
 
 variable "vm_image_id" {
   type        = string
@@ -434,6 +499,12 @@ variable "vm_key_pair_name" {
   default     = null
 }
 
+variable "vm_ebs_kms_key_id" {
+  type        = string
+  description = "The KMS key ID to use for launch template EBS block device mappings. Leave null to use the account default EBS KMS key."
+  default     = null
+}
+
 variable "custom_startup_script_template" {
   type        = string
   description = "Filename of a custom Vault Install script template to use in place of the built-in user_data script. The file must exist within a directory named './templates' in your current working directory."
@@ -444,11 +515,14 @@ variable "custom_startup_script_template" {
     error_message = "File not found. Ensure the file exists within a directory named './templates' relative to your current working directory."
   }
 }
+
 variable "ec2_allow_ssm" {
   type        = bool
   description = "Boolean to attach the `AmazonSSMManagedInstanceCore` policy to the Vault instance role (`aws_iam_role.vault_iam_role`), allowing the SSM agent (if present) to function."
   default     = false
 }
+
+
 
 #-----------------------------------------------------------------------------------
 # IAM variables
@@ -533,4 +607,22 @@ variable "stickiness_enabled" {
   type        = bool
   description = "Enable sticky sessions by client IP address for the load balancer."
   default     = true
+}
+
+variable "enable_cross_zone_load_balancing" {
+  type        = bool
+  description = "Enable cross-zone load balancing for the Network Load Balancer."
+  default     = false
+}
+
+
+variable "enable_vault_cluster_port_listener" {
+  type        = bool
+  description = "Enable Network Load Balancer listener on port 8201 (Vault cluster port). When enabled, creates an additional listener and target group for the cluster port."
+  default     = false
+
+  validation {
+    condition     = !var.enable_vault_cluster_port_listener || var.net_ingress_lb_cluster_cidr_blocks != null
+    error_message = "When enable_vault_cluster_port_listener is true, net_ingress_lb_cluster_cidr_blocks must be set."
+  }
 }
