@@ -1,3 +1,20 @@
+## v0.5.0
+
+## What's Changed
+* [COMPLIANCE] Add/Update Copyright Headers by @hashicorp-copywrite[bot] in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/53
+* manual sync by @abuxton in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/52
+* Release 0.4.0 by @abuxton in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/51
+* upstream merge template repository by @github-actions[bot] in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/55
+* upstream merge template repository by @github-actions[bot] in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/57
+* Variable to support CMK by @nphilbrook in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/54
+* upstream merge template repository by @github-actions[bot] in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/58
+* [COMPLIANCE] Add/Update Copyright Headers by @hashicorp-copywrite[bot] in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/59
+
+## New Contributors
+* @hashicorp-copywrite[bot] made their first contribution in https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/pull/53
+
+**Full Changelog**: https://github.com/hashicorp/terraform-aws-vault-enterprise-hvd/compare/0.4.0...0.5.0
+
 ## v0.4.0
 
 ## What's Changed
